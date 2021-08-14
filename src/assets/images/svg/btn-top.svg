@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="43.5" height="43.5">
+    <path fill="#FD7066" fill-rule="evenodd" d="M0 20.999C0 9.401 9.401 0 20.999 0c11.598 0 21 9.401 21 20.999 0 11.598-9.402 21-21 21S0 32.597 0 20.999z"/>
+    <text x="9" y="26" fill="#FFF" font-family="Malgun Gothic" font-size="14" font-weight="bold">
+        Top
+    </text>
+    <path fill="none" fill-rule="evenodd" stroke="#FFF" stroke-width="3" d="M20.999 3.999l-5 6h11l-6-6z"/>
+</svg>

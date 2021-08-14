@@ -1,0 +1,119 @@
+@charset "UTF-8";
+
+
+// font size mixin
+@mixin font-size($font-size, $line-height: normal, $letter-spacing: normal) {
+  font-size: $font-size * 1px;
+  // font-size: $font-size * 0.1rem;
+  // example using rem values and 62.5% font-size so 1rem = 10px
+
+  @if $line-height==normal {
+    line-height: normal;
+  } @else {
+    line-height: $line-height / $font-size;
+  }
+
+  @if $letter-spacing==normal {
+    letter-spacing: normal;
+  } @else {
+    letter-spacing: #{$letter-spacing / $font-size}rem;
+  }
+}
+
+  @mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @mixin rounded($radius) {
+    -webkit-border-radius: $radius;
+    -moz-border-radius: $radius;
+    border-radius: $radius;
+}
+
+ @mixin hideText {
+    text-indent: -9999px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  @mixin clearfix() {
+    &::after {
+      display: block;
+      content: "";
+      clear: both;
+    }
+  }
+
+  @mixin size($width, $height) {
+    width: $width;
+    height: $height;
+  }
+
+  @mixin pos($pos, $top, $left) {
+    position: $pos;
+    top: $top;
+    left: $left;
+  }
+
+  @mixin pos-top-fixed() {
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  @mixin pos-bottom-fixed() {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+  }
+
+  @mixin transition($arg) {
+    -webkit-transition: $arg;
+       -moz-transition: $arg;
+        -ms-transition: $arg;
+            transition: $arg;
+  }
+
+ @mixin margin-classes {
+    @for $i from 1 through $sizes {
+      $margin: $i * 0.25rem;
+      /* margin #{$margin} */
+      .m#{$i}  {margin: $margin;}
+      .ml#{$i} {margin-left: $margin;}
+      .mr#{$i} {margin-right: $margin;}
+      .mt#{$i} {margin-top: $margin;}
+      .mb#{$i} {margin-bottom: $margin;}
+      .mx#{$i} {margin-left: $margin; margin-right: $margin;}
+      .my#{$i} {margin-top: $margin; margin-bottom: $margin;}
+    }
+  }
+
+  @mixin padding-classes {
+    @for $i from 1 through $sizes {
+      $padding: $i * 0.25rem;
+      /* padding #{$padding} */
+      .p#{$i} {padding: $padding;}
+      .pl#{$i} {padding-left: $padding;}
+      .pr#{$i} {padding-right: $padding;}
+      .pt#{$i} {padding-top: $padding;}
+      .pb#{$i} {padding-bottom: $padding;}
+      .px#{$i} {padding-left: $padding; padding-right: $padding;}
+      .py#{$i} {padding-top: $padding; padding-bottom: $padding;}
+    }
+  }
+
+  @mixin border-radius($top-left:null, $top-right:null, $bottom-right:null, $bottom-left:null){
+    -webkit-border-radius: $top-left $top-right $bottom-right $bottom-left;
+    -moz-border-radius: $top-left $top-right $bottom-right $bottom-left;
+    -ms-border-radius: $top-left $top-right $bottom-right $bottom-left;
+    border-radius: $top-left $top-right $bottom-right $bottom-left;
+  }
+@mixin position($position, $top: null, $right: null, $bottom: null, $left: null) {
+  position: $position;
+  top: $top;
+  right: $right;
+  bottom: $bottom;
+  left: $left;
+}

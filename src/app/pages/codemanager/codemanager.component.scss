@@ -1,0 +1,14 @@
+@import '../../../scss/styles';
+.dx-fieldset:first-child > h4:first-child {
+  margin-top: 0;
+}
+
+.dx-field > .dx-field-label {
+  width: 30%;
+}
+
+.dx-field > .dx-field-value {
+  width: 70%;
+}
+
+

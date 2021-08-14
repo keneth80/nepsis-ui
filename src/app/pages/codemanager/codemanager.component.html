@@ -1,0 +1,160 @@
+
+  <!--flex-wrap-->
+  <div class="flex-wrap">
+
+    <!--flex-grid-->
+    <div class="flex-grid">
+      <!--top search form-->
+      <div class="col-12">
+        <div class="dx-card responsive-paddings">
+          <dx-form class="form-search"
+            [formData]="employee"
+            labelLocation="left"
+            [colCountByScreen]="colCountByScreen"
+            [showColonAfterLabel]="showColon">
+            <dxi-item itemType="group">
+              <dxi-item dataField="Group Code"></dxi-item>
+            </dxi-item>
+            <dxi-item class="form-search-btn">
+              <button class="btn back-cyan small">Search</button>
+              <button class="btn small none i-reset"></button>
+            </dxi-item>
+          </dx-form>
+        </div>
+      </div>
+      <!--//top search form-->
+    </div>
+    <!--//flex-grid-->
+
+    <!--flex-grid-->
+    <div class="flex-grid">
+      <div class="col-12">
+        <div class="dx-card responsive-paddings">
+
+        </div>
+      </div>
+
+    </div>
+    <!--//flex-grid-->
+
+    <!--flex-grid 3/9-->
+    <div class="flex-grid">
+      <!--col-3-->
+      <div class="col-4">
+        <div class="dx-card responsive-paddings">
+          <!--form-->
+          <div class="form">
+            <!--dx-fieldset-->
+            <div class="dx-fieldset">
+              <div class="dx-fieldset-header">Group Code</div>
+              <!--from second grid-->
+              <div class="dx-field">
+                <div class="dx-field-label">Group Code<span class="dx-field-item-required-mark">&nbsp;*</span></div>
+                <div class="dx-field-value">
+                  <div class="form-grid middle second"><!--form-grid middle second-->
+                    <div><dx-text-box value="CUST_TYPE_CD"></dx-text-box></div>
+                    <div><button class="btn back-cyan medium">검증</button></div>
+                  </div><!--form-grid middle second-->
+                </div>
+              </div>
+              <!--from second grid-->
+              <!--dx-field-->
+              <div class="dx-field">
+                <div class="dx-field-label">Group Code Num<span class="dx-field-item-required-mark">&nbsp;*</span></div>
+                <dx-text-box class="dx-field-value" value="고객유형">
+                </dx-text-box>
+              </div>
+              <!--dx-field-->
+              <!-- select box -->
+              <div class="dx-field">
+                <div class="dx-field-label">Description</div>
+                <div class="dx-field-value">
+                  <dx-text-area
+                    [height]="70" >
+                  </dx-text-area>
+                </div>
+              </div>
+              <!--//select box -->
+              <!-- select box -->
+              <div class="dx-field">
+                <div class="dx-field-label">Job Code<span class="dx-field-item-required-mark">&nbsp;*</span></div>
+                <div class="dx-field-value">
+                  <dx-select-box
+                    [items]="valueChangeEvents"
+                    valueExpr="name"
+                    displayExpr="title">
+                  </dx-select-box>
+                </div>
+              </div>
+              <!--//select box -->
+              <!-- radio -->
+              <div class="dx-field">
+                <div class="dx-field-label">Delete Y/N<span class="dx-field-item-required-mark">&nbsp;*</span></div>
+                <div class="dx-field-value">
+                  <dx-radio-group
+                    [items]="priorities"
+                    layout="horizontal">
+                  </dx-radio-group>
+                </div>
+              </div>
+              <!--//radio -->
+              <!--from thirds grid-->
+              <div class="dx-field">
+                <div class="dx-field-label">Group Code</div>
+                <div class="dx-field-value">
+                  <div class="form-grid middle thirds"><!--form-grid middle thirds-->
+                    <div><dx-text-box class="i-search" value=""></dx-text-box></div>
+                    <div>/</div>
+                    <div><dx-text-box value=""></dx-text-box></div>
+                  </div><!--form-grid middle thirds-->
+                </div>
+              </div>
+              <!--//from thirds grid-->
+              <!--dx-field-->
+              <div class="dx-field t-right">
+                <button class="btn back-cyan small">신규등록</button>
+              </div>
+              <!--//dx-field-->
+            </div>
+            <!--dx-fieldset-->
+          </div>
+          <!--//form-->
+        </div>
+      </div>
+      <!--//col-3-->
+      <!--col-9-->
+      <div class="col-8">
+        <div class="dx-card responsive-paddings">
+          <div id="form-container">
+            <dx-form id="form1" [colCount]="1" [formData]="employee">
+              <dxi-item itemType="group" caption="System Information">
+                <dxi-item dataField="FirstName" [editorOptions]="{ disabled: true }"></dxi-item>
+                <dxi-item dataField="Position" editorType="dxSelectBox" [editorOptions]="{ items: positions, searchEnabled: true, value: '' }">
+                  <dxi-validation-rule type="required" message="Position is required"></dxi-validation-rule>
+                </dxi-item>
+                <dxi-item dataField="HireDate" editorType="dxDateBox" [editorOptions]="{ value: null, width: '100%' }">
+                  <dxi-validation-rule type="required" message="Hire date is required"></dxi-validation-rule>
+                </dxi-item>
+                <dxi-item dataField="BirthDate" editorType="dxDateBox" [editorOptions]="{ disabled: true, width: '100%' }"></dxi-item>
+                <dxi-item dataField="Address"></dxi-item>
+                <dxi-item dataField="Notes" editorType="dxTextArea" [editorOptions]="{ height: 48}" [colSpan]="2"></dxi-item>
+                <dxi-item dataField="Phone" [editorOptions]="{ mask: '+1 (X00) 000-0000', maskRules: rules }"></dxi-item>
+              </dxi-item>
+            </dx-form>
+          </div>
+        </div>
+      </div>
+      <!--//col-9-->
+    </div>
+    <!--//flex-grid 3/9-->
+    <!--button-area-->
+    <div class="button-area">
+      <div class="t-right">
+        <button class="btn back-carmine small">Save</button>
+        <button class="btn back-carmine small outline">Delete</button>
+      </div>
+    </div>
+    <!--button-area-->
+  </div>
+  <!--//flex-wrap-->
+

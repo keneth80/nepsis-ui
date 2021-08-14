@@ -1,0 +1,85 @@
+// @import "../../../../themes/generated/variables.base.scss";
+// @import "../../../../dx-styles.scss";
+
+// :host {
+//   flex: 0 0 auto;
+//   z-index: 1;
+//   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+
+//   ::ng-deep .dx-toolbar .dx-toolbar-item.menu-button>.dx-toolbar-item-content .dx-icon {
+//     color: $base-accent;
+//   }
+// }
+
+// ::ng-deep .dx-toolbar.header-toolbar .dx-toolbar-items-container .dx-toolbar-after {
+//   padding: 0 40px;
+
+//   :host-context(.screen-x-small) & {
+//     padding: 0 20px;
+//   }
+// }
+
+// ::ng-deep .dx-toolbar .dx-toolbar-item.menu-button {
+//   width: $side-panel-min-width;
+//   text-align: center;
+//   padding: 0;
+// }
+
+// ::ng-deep .header-title .dx-item-content {
+//   padding: 0;
+//   margin: 0;
+// }
+
+// :host-context(.dx-theme-generic) {
+//   .dx-toolbar {
+//     padding: 10px 0;
+//   }
+
+//   .user-button>.dx-button-content {
+//     padding: 3px;
+//   }
+// }
+
+@import "../../../../scss/styles";
+
+::ng-deep .header-title{width:200px;max-width:200px !important;height:70px;background:$black;margin:0;padding:0 !important;}
+:host {flex: 0 0 auto;z-index: 1;position: fixed;width: 100%;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  ::ng-deep .dx-toolbar .dx-toolbar-item.menu-button>.dx-toolbar-item-content .dx-icon { color: $white;}
+}
+.layout-header{
+  z-index: 1501;
+}
+::ng-deep .dx-toolbar{height:70px;background:$gnb-bg;
+  .dx-toolbar-items-container{height: 70px;}
+}
+
+
+::ng-deep .dx-toolbar.header-toolbar .dx-toolbar-items-container .dx-toolbar-after {padding: 0 40px;
+  :host-context(.screen-x-small) & {padding: 0 20px;}
+}
+
+::ng-deep .dx-toolbar .dx-toolbar-item.menu-button {
+  width: $side-panel-min-width;
+  text-align: center;
+  padding: 0;
+}
+
+
+::ng-deep .header-title .dx-item-content {
+  padding: 0;
+  margin: 0;
+}
+
+:host-context(.dx-theme-generic) {
+  .dx-toolbar {
+    padding: 0;
+  }
+
+  .user-button>.dx-button-content {
+    padding: 3px;
+  }
+}
+
+::ng-deep .dx-toolbar-label{
+  .dx-toolbar-item-content { > div{text-align:center;font-size:$logo;font-family:$base-font-family;font-weight:$font-bold;}}
+}

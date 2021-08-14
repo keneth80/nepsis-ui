@@ -1,0 +1,4 @@
+{
+  "remote": "http://k8s-default-ingresst-3f8aaeb61b-585293140.ap-northeast-2.elb.amazonaws.com",
+  "mode": "production"
+}

@@ -1,0 +1,11 @@
+@import "../../../../scss/styles";
+
+:host {
+  display: block;
+  color: rgba($base-text-color, alpha($base-text-color) * 0.9);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+}
+.footer-info{padding:0 10px;@include position(relative);
+  .i-question{@include position(absolute);margin-left:5px;}
+}
