@@ -6,7 +6,9 @@ import {
   DxFormModule,
   DxTextBoxModule,
   DxButtonModule,
-  DxRadioGroupModule
+  DxRadioGroupModule,
+  DxDataGridModule,
+  DxPopupModule
 } from 'devextreme-angular';
 import { CodeManagerComponent } from './codemanager.component';
 import { CodeManagerRoutingModule } from './codemanager-routing.module';
@@ -20,7 +22,9 @@ import { CodeManagerRoutingModule } from './codemanager-routing.module';
     DxFormModule,
     DxTextBoxModule,
     DxButtonModule,
-    DxRadioGroupModule
+    DxRadioGroupModule,
+    DxDataGridModule,
+    DxPopupModule
   ],
   declarations: [CodeManagerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

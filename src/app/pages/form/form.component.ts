@@ -1,13 +1,9 @@
-import { NgModule, Component, ViewChild, enableProdMode } from '@angular/core';
+import { NgModule, Component, ViewChild } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { DxRadioGroupComponent } from 'devextreme-angular';
 import data from 'devextreme/data/array_store';
 import { Service, Task } from '../../shared/services/radio.service';
-
-if(!/localhost/.test(document.location.host)) {
-  enableProdMode();
-}
 
 @Component({
   providers: [Service],

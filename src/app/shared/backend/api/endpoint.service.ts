@@ -9,7 +9,7 @@ import { UserModel } from '../../models/user-model';
   providedIn: 'root'
 })
 export class EndpointService {
-  private PRE_FIX = '';
+  private PRE_FIX = 'api/cm7710';
 
   constructor(
     private http: HttpClient,
@@ -18,7 +18,7 @@ export class EndpointService {
   }
 
   login(userId: string, password: string) {
-    return this.http.post<any>(`${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}login`, 
+    return this.http.post<any>(`${this.globalVarialbe.remoteUrl}/login`, 
       { username: userId, password },
       { observe: 'response' }
     )
@@ -43,5 +43,17 @@ export class EndpointService {
         // map(AuthMapper.userModelMapper),
         shareReplay()
     );
-}
+  }
+
+  retrieveGroupCodeList(searchKey: string) {
+    return this.http.get<any>(
+      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/groupCodeList?cmnGrpCd=${searchKey}`
+    );
+  }
+
+  retrieveCodeListByGroup(groupKey: string) {
+    return this.http.get<any>(
+      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/codeList?cmnGrpCd=${groupKey}`
+    );
+  }
 }

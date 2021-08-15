@@ -1,23 +1,39 @@
-import { NgModule, Component, ViewChild, enableProdMode, AfterViewInit } from '@angular/core';
-import { Employee, Service } from '../../shared/services/app.codemanager';
+import { NgModule, Component, ViewChild, AfterViewInit } from '@angular/core';
 import 'devextreme/data/odata/store';
 import { DxFormComponent } from 'devextreme-angular';
+import ArrayStore from 'devextreme/data/array_store';
 
-
-if(!/localhost/.test(document.location.host)) {
-  enableProdMode();
+type GroupSearchForm = {
+  cmnGrpCd: string;
 }
 
+type CodeForm = {
+  cmnGrpCd: string;
+  cmnCd: string;
+  cmnCdNm: string;
+  srtOdr: number;
+  useYn: string;
+  rmk: string;
+  type: string;
+}
+
+type GroupCodeForm = {
+  cmnGrpCd: string;
+  cmnGrpCdNm: string;
+  cdDesc: string;
+  useYn: string;
+  type: string;
+  codeList: CodeForm[];
+}
 
 @Component({
-  providers: [Service],
   templateUrl: 'codemanager.component.html',
   styleUrls: [ './codemanager.component.scss' ]
 })
 
 export class CodeManagerComponent implements AfterViewInit {
-  // @ViewChild(DxFormComponent, { static: false }) myform: DxFormComponent;
-  employee: Employee;
+  groupSearchForm: GroupSearchForm;
+  groupCodeForm: GroupCodeForm;
   positions: string[];
   rules: Object;
   colCountByScreen: object;
@@ -31,11 +47,42 @@ export class CodeManagerComponent implements AfterViewInit {
   data: any;
   currentData: string[] = [];
 
+  gridPriority: any[];
+
+  groupCodeList: any[] = [];
+
+  selectedItemKeys: any[] = [];
+
+  dataSource: ArrayStore;
+
   constructor(
-    service: Service
+    
   ) {
-    this.employee = service.getEmployee();
-    this.positions = service.getPositions();
+    this.groupSearchForm = {
+      cmnGrpCd: ''
+    };
+
+    this.groupCodeForm = {
+      cmnGrpCd: 'CUST_TYPE_CD',
+      cmnGrpCdNm: '',
+      cdDesc: '',
+      useYn: 'Y',
+      type: 'insert',
+      codeList: []
+    };
+
+    this.dataSource = new ArrayStore({
+      key: 'cmnCd',
+      data: []
+  });
+
+    this.gridPriority = [
+      { name: 'High', value: 4 },
+      { name: 'Urgent', value: 3 },
+      { name: 'Normal', value: 2 },
+      { name: 'Low', value: 1 }
+    ];
+
     this.rules = { 'X': /[02-9]/ };
     this.showColon = false;
     this.minColWidth = 300;
@@ -55,5 +102,38 @@ export class CodeManagerComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     // this.myform.instance.validate()
+  }
+
+  selectionChanged(data: any) {
+    this.selectedItemKeys = data.selectedRowKeys;
+  }
+
+  deleteRecords() {
+    // this.selectedItemKeys.forEach((key) => {
+    //     this.dataSource.remove(key);
+    // });
+    // this.dataGrid.instance.refresh();
+  }
+
+  onToolbarPreparing(e: any) {
+    e.toolbarOptions.items[0].showText = 'always';
+
+    e.toolbarOptions.items.push({
+        location: "after",
+        template: "deleteButton"
+    });
+  }
+
+  onSubmitHandler(event: Event) {
+    console.log('onSubmitHandler : ', this.groupSearchForm);
+  }
+
+  onInputResetHandler(event: Event) {
+    this.groupSearchForm.cmnGrpCd = '';
+    console.log('onInputResetHandler : ');
+  }
+
+  onSubmitBuGroupCodeHandler(event: Event) {
+    console.log('onSubmitHandler : ', this.groupCodeForm);
   }
 }
