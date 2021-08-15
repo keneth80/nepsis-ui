@@ -9,14 +9,13 @@ import { DxToolbarModule } from 'devextreme-angular/ui/toolbar';
 import { Router } from '@angular/router';
 import { UserModel } from '../../models/user-model';
 import { AuthenticationService } from '../../services/auth/authentication.service';
-import { BaseComponent } from '../base.component';
 @Component({
   selector: 'app-header',
   templateUrl: 'header.component.html',
   styleUrls: ['./header.component.scss']
 })
 
-export class HeaderComponent extends BaseComponent implements OnInit {
+export class HeaderComponent implements OnInit {
   @Output()
   menuToggle = new EventEmitter<boolean>();
 
@@ -26,41 +25,33 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   @Input()
   title!: string;
 
-  user: UserModel | null = { userName: '', token: '' };
+  user: IUser | null = { userName: '', token: '' };
 
-  // userMenuItems = [
-  //   {
-  //     text: 'Profile',
-  //     icon: 'user',
-  //     onClick: () => {
-  //       this.router.navigate(['/profile']);
-  //     }
-  //   },
-  //   {
-  //     text: 'Logout',
-  //     icon: 'runner',
-  //     onClick: () => {
-  //       this.authService.logOut();
-  //     }
-  //   }
-  // ];
+  userMenuItems = [
+    // {
+    //   text: 'Profile',
+    //   icon: 'user',
+    //   onClick: () => {
+    //     this.router.navigate(['/profile']);
+    //   }
+    // },
+    {
+      text: 'Logout',
+      icon: 'runner',
+      onClick: () => {
+        this.authService.logOut();
+      }
+    }
+  ];
 
   constructor(
-    private authService: AuthenticationService,
+    private authService: AuthService,
+    private authenticationService: AuthenticationService, 
     private router: Router
-  ) {
-    super();
-  }
+  ) { }
 
   ngOnInit() {
-    this.user = this.authService.user;
-    this.subscription = this.authService.loginUser$.subscribe((user: UserModel) => {
-      if (user) {
-        this.user = user;
-      } else {
-        this.router.navigate(['login-form']);
-      }
-    });
+    this.authService.getUser().then((e) => this.user = e.data);
   }
 
   toggleMenu = () => {
@@ -68,7 +59,8 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   }
 
   onLogoutHandler(event: any) {
-    this.authService.logout();
+    this.authService.logOut();
+    // this.authenticationService.logout();
   }
 }
 

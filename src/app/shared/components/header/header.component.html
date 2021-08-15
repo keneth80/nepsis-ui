@@ -26,8 +26,19 @@
       <button class="btn big none">Common</button>
       <button class="btn big none">System</button>
     </dxi-item>
-     <dxi-item location="after">
-      <div class="txt-white"><span class="txt-cyan">홍길동</span>님</div>
+    <dxi-item *ngIf="user?.userName" location="after">
+      <div style="display: flex;">
+        <div class="txt-white">
+          <span class="txt-cyan">{{user?.userName}}</span>님
+        </div>
+        <dx-button
+          class="user-button authorization"
+          style="margin-left: 10px;"
+          height="100%"
+          (click)="onLogoutHandler($event)">
+          Logout
+        </dx-button>
+      </div>
     </dxi-item>
     <!-- <dxi-item
       location="after"

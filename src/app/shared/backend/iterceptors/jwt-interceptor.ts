@@ -5,13 +5,11 @@ import { AuthenticationService } from '../../services/auth/authentication.servic
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-    constructor(
-      private authenticationService: AuthenticationService
-    ) { }
+    constructor() { }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         // TODO: user setup into token
-        const token = this.authenticationService.token;
+        const token = localStorage.getItem('jwt_token');
         if (token) {
             request = request.clone({
                 setHeaders: {

@@ -2,13 +2,15 @@ import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot } from '@angular/router';
 
 export interface IUser {
-  email: string;
-  avatarUrl?: string
+  userName: string;
+  token?: string;
+  avatarUrl?: string;
 }
 
 const defaultPath = '/';
 const defaultUser = {
-  email: 'sandra@example.com',
+  userName: 'admin',
+  token: '',
   avatarUrl: 'https://js.devexpress.com/Demos/WidgetsGallery/JSDemos/images/employees/06.png'
 };
 
@@ -24,14 +26,16 @@ export class AuthService {
     this._lastAuthenticatedPath = value;
   }
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router
+  ) { }
 
-  async logIn(email: string, password: string) {
+  async logIn(userName: string, password: string) {
 
     try {
       // Send request
-      console.log(email, password);
-      this._user = { ...defaultUser, email };
+      console.log(userName, password);
+      this._user = { ...defaultUser, userName };
       this.router.navigate([this._lastAuthenticatedPath]);
 
       return {
@@ -42,7 +46,7 @@ export class AuthService {
     catch {
       return {
         isOk: false,
-        message: "Authentication failed"
+        message: 'Authentication failed'
       };
     }
   }
@@ -64,10 +68,10 @@ export class AuthService {
     }
   }
 
-  async createAccount(email: string, password: string) {
+  async createAccount(userName: string, password: string) {
     try {
       // Send request
-      console.log(email, password);
+      console.log(userName, password);
 
       this.router.navigate(['/create-account']);
       return {
@@ -77,15 +81,15 @@ export class AuthService {
     catch {
       return {
         isOk: false,
-        message: "Failed to create account"
+        message: 'Failed to create account'
       };
     }
   }
 
-  async changePassword(email: string, recoveryCode: string) {
+  async changePassword(userName: string, recoveryCode: string) {
     try {
       // Send request
-      console.log(email, recoveryCode);
+      console.log(userName, recoveryCode);
 
       return {
         isOk: true
@@ -94,15 +98,15 @@ export class AuthService {
     catch {
       return {
         isOk: false,
-        message: "Failed to change password"
+        message: 'Failed to change password'
       }
     };
   }
 
-  async resetPassword(email: string) {
+  async resetPassword(userName: string) {
     try {
       // Send request
-      console.log(email);
+      console.log(userName);
 
       return {
         isOk: true
@@ -111,7 +115,7 @@ export class AuthService {
     catch {
       return {
         isOk: false,
-        message: "Failed to reset password"
+        message: 'Failed to reset password'
       };
     }
   }

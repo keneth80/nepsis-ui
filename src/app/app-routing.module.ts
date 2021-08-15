@@ -6,6 +6,7 @@ import { AuthGuardService } from './shared/services';
 // import { TasksComponent } from './pages/tasks/tasks.component';
 import { DxDataGridModule, DxFormModule } from 'devextreme-angular';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/compiler';
+import { AuthGuard } from './shared/gaurd/auth.gaurd';
 
 const routes: Routes = [
   // {
@@ -18,60 +19,60 @@ const routes: Routes = [
   //   component: ProfileComponent,
   //   canActivate: [ AuthGuardService ]
   // },
-  {
-    path: 'home',
-    loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
-    canActivate: [ AuthGuardService ]
-  },
+  // {
+  //   path: 'home',
+  //   loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
+  //   canActivate: [ AuthGuardService ]
+  // },
   {
     path: 'login-form',
     component: LoginFormComponent,
-    canActivate: [ AuthGuardService ]
+    canActivate: [ AuthGuard ]
   },
-  {
-    path: 'reset-password',
-    component: ResetPasswordFormComponent,
-    canActivate: [ AuthGuardService ]
-  },
-  {
-    path: 'create-account',
-    component: CreateAccountFormComponent,
-    canActivate: [ AuthGuardService ]
-  },
-  {
-    path: 'change-password/:recoveryCode',
-    component: ChangePasswordFormComponent,
-    canActivate: [ AuthGuardService ]
-  },
+  // {
+  //   path: 'reset-password',
+  //   component: ResetPasswordFormComponent,
+  //   canActivate: [ AuthGuard ]
+  // },
+  // {
+  //   path: 'create-account',
+  //   component: CreateAccountFormComponent,
+  //   canActivate: [ AuthGuard ]
+  // },
+  // {
+  //   path: 'change-password/:recoveryCode',
+  //   component: ChangePasswordFormComponent,
+  //   canActivate: [ AuthGuard ]
+  // },
   // user 작성 페이지
   {
     path: 'grid',
     loadChildren: () => import('./pages/grid/grid.module').then(m => m.GridModule),
-    canActivate: [ AuthGuardService ]
+    canActivate: [ AuthGuard ]
   },
   {
     path: 'codemanager',
     loadChildren: () => import('./pages/codemanager/codemanager.module').then(m => m.CodeManagerModule),
-    canActivate: [ AuthGuardService ]
+    canActivate: [ AuthGuard ]
   },
   {
     path: 'form',
     loadChildren: () => import('./pages/form/form.module').then(m => m.FormModule),
-    canActivate: [ AuthGuardService ]
+    canActivate: [ AuthGuard ]
   },
 {
     path: 'button',
     loadChildren: () => import('./pages/button/button.module').then(m => m.ButtonModule),
-    canActivate: [ AuthGuardService ]
+    canActivate: [ AuthGuard ]
   },
   {
     path: 'table-grid',
     loadChildren: () => import('./pages/table/table-grid.module').then(m => m.TableGridModule),
-    canActivate: [ AuthGuardService ]
+    canActivate: [ AuthGuard ]
   },
   {
     path: '**',
-    redirectTo: 'home'
+    redirectTo: 'codemanager'
   }
 ];
 

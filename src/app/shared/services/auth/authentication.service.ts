@@ -5,32 +5,45 @@ import { Subject, Observable, throwError } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { GlobalVariableService } from '../app/global-variable.service';
 import { CatchAll } from '../../decorator/catch';
+import { EndpointService } from '../../backend/api/endpoint.service';
+import { UserModel } from '../../models/user-model';
+import { Router } from '@angular/router';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class AuthenticationService {
   private PRE_FIX: string = '';
 
   private TOKEN_NAME = 'jwt_token';
 
-  private REFRESH_TOKEN_NAME = 'refresh_token';
+  // private REFRESH_TOKEN_NAME = 'refresh_token';
 
   private currentUserSubject: Subject<any>;
 
+  private loginErrorSubject: Subject<any>;
+
   private jwtHelper: JwtHelperService = new JwtHelperService();
 
-  private currentUserModel: any;
+  private currentUserModel: UserModel | null = null;
 
   constructor(
-    private http: HttpClient,
+    private endpoint: EndpointService,
+    private router: Router,
     private globalService: GlobalVariableService
   ) {
       this.currentUserSubject = new Subject();
+      this.loginErrorSubject = new Subject();
   }
 
-  get loginUser$(): Observable<any> {
+  get user(): UserModel | null {
+    return this.currentUserModel;
+  }
+
+  get loginUser$(): Observable<UserModel> {
       return this.currentUserSubject.asObservable();
+  }
+
+  get loginError$(): Observable<any> {
+    return this.loginErrorSubject.asObservable();
   }
 
   get currentUserValue(): any { // UserModel
@@ -46,44 +59,55 @@ export class AuthenticationService {
 
   @CatchAll
   login(userId: string, password: string) {
-    // this.samplApiService.login(userId, password)
-    //     .subscribe(
-    //         (data: UserModel) => {
-    //             this.setToken(data.token);
-    //             this.setRefreshToken(data.refreshToken);
-    //             sessionStorage.setItem('workHistory', '');
-    //             this.currentUserSubject.next(data);
-    //         },
-    //         (error) => {
-    //             if (console && console.log) {
-    //                 console.log('login fail : ', error);
-    //             }
-    //             this.currentUserSubject.next(null);
-    //         }
-    //     );
+    this.endpoint.login(userId, password)
+        .subscribe(
+            (data: UserModel) => {
+                this.setToken(data.token || '');
+                // this.setRefreshToken(data.refreshToken);
+                this.currentUserModel = data;
+                this.currentUserSubject.next(data);
+            },
+            (error: any) => {
+                if (console && console.log) {
+                    console.log('login fail : ', error);
+                }
+                // TODO: login 완성 되면 복구
+                // this.loginErrorSubject.next(error);
+                this.currentUserModel = {
+                  userName: 'admin',
+                  token: 'token'
+                };
+                this.currentUserSubject.next({
+                  userName: 'admin',
+                  token: 'token'
+                });
+            }
+        );
   }
 
-  logout() {
+  async logout() {
     // remove user from local storage to log user out
     this.removeToken();
-    this.currentUserSubject.next(null);
+    this.currentUserModel = null;
+    this.currentUserSubject.next(this.currentUserModel);
+    this.router.navigate(['/login-form']);
   }
 
   setToken(token: string): void {
     localStorage.setItem(this.TOKEN_NAME, token);
   }
 
-  setRefreshToken(refreshToken: string): void {
-      localStorage.setItem(this.REFRESH_TOKEN_NAME, refreshToken);
-  }
+  // setRefreshToken(refreshToken: string): void {
+  //     localStorage.setItem(this.REFRESH_TOKEN_NAME, refreshToken);
+  // }
 
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_NAME);
   }
 
-  getRefreshToken(): string | null {
-    return localStorage.getItem(this.REFRESH_TOKEN_NAME);
-  }
+  // getRefreshToken(): string | null {
+  //   return localStorage.getItem(this.REFRESH_TOKEN_NAME);
+  // }
 
   removeToken(): void {
     localStorage.removeItem(this.TOKEN_NAME);
@@ -95,7 +119,8 @@ export class AuthenticationService {
 
   // 토큰 유효성 검증
   isAuthenticated(): boolean {
-    const token = this.getToken();
-    return token ? !this.isTokenExpired(token) : false;
+    return true;
+    // const token = this.getToken();
+    // return token ? !this.isTokenExpired(token) : false;
   }
 }

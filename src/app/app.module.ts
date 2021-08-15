@@ -9,6 +9,8 @@ import { UnauthenticatedContentModule } from './unauthenticated-content';
 import { AppRoutingModule } from './app-routing.module';
 import { ServiceModule } from './shared/services/service.module';
 import { HttpClientModule } from '@angular/common/http';
+import { AuthGuard } from './shared/gaurd/auth.gaurd';
+import { AuthenticationService } from './shared/services/auth/authentication.service';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,7 @@ import { HttpClientModule } from '@angular/common/http';
     ServiceModule,
     HttpClientModule
   ],
-  providers: [AuthGuardService, AuthService, ScreenService, AppInfoService],
+  providers: [AuthGuard, AuthenticationService, ScreenService, AppInfoService],
   bootstrap: [AppComponent],
   schemas: [
     NO_ERRORS_SCHEMA,
