@@ -13,7 +13,12 @@
             [colCountByScreen]="colCountByScreen"
             [showColonAfterLabel]="showColon">
             <dxi-item itemType="group">
-              <dxi-item dataField="cmnGrpCd"></dxi-item>
+              <dxi-item dataField="cmnGrpCd">
+                <!-- <dxi-validation-rule 
+                  type="required"
+                  message="Group Code is required">
+                </dxi-validation-rule> -->
+              </dxi-item>
             </dxi-item>
             <dxi-item class="form-search-btn">
               <button class="btn back-cyan small" (click)="onSubmitHandler($event)">Search</button>
@@ -37,6 +42,8 @@
               [focusedRowIndex]="0"
               [columnAutoWidth]="true"
               [columnHidingEnabled]="true"
+              [(focusedRowKey)]="focusedGroupCodeRowKey"
+              (onFocusedRowChanging)="onFocusedRowChangingHandler($event)"
               (onFocusedRowChanged)="onFocusedRowChangedHandler($event)"
               keyExpr="cmnGrpCd">
 
@@ -134,7 +141,7 @@
                 <!--//from thirds grid-->
                 <!--dx-field-->
                 <div class="dx-field t-right">
-                  <button class="btn back-cyan small" (click)="onRegisterHandler($event)">신규등록</button>
+                  <button class="btn back-cyan small" (click)="onNewRegisterHandler($event)">신규등록</button>
                 </div>
                 <!--//dx-field-->
               </div>
@@ -216,8 +223,8 @@
     <!--button-area-->
     <div class="bottom-button-container">
       <div class="t-right">
-        <button class="btn back-carmine small" (click)="onSubmitBuGroupCodeHandler($event)">Save</button>
-        <button class="btn back-carmine small outline">Delete</button>
+        <button class="btn back-carmine small" (click)="onSubmitByGroupCodeHandler($event)">Save</button>
+        <button class="btn back-carmine small outline" (click)="onDeleteByGroupCodeHandler($event)">Delete</button>
       </div>
     </div>
     <!--button-area-->

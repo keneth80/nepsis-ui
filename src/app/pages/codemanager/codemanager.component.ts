@@ -2,6 +2,10 @@ import { NgModule, Component, ViewChild, AfterViewInit } from '@angular/core';
 import 'devextreme/data/odata/store';
 import { DxFormComponent } from 'devextreme-angular';
 import ArrayStore from 'devextreme/data/array_store';
+import { sha1 } from 'object-hash';
+import { confirm } from 'devextreme/ui/dialog';
+import { CodeManagerService } from './codemanager.service';
+import { alert } from "devextreme/ui/dialog"
 
 type GroupSearchForm = {
   cmnGrpCd: string;
@@ -32,7 +36,10 @@ type GroupCodeForm = {
 
 @Component({
   templateUrl: 'codemanager.component.html',
-  styleUrls: [ './codemanager.component.scss' ]
+  styleUrls: [ './codemanager.component.scss' ],
+  providers: [
+    CodeManagerService
+  ]
 })
 
 export class CodeManagerComponent implements AfterViewInit {
@@ -42,6 +49,7 @@ export class CodeManagerComponent implements AfterViewInit {
   colCount: number;
   colCountByScreen: any;
 
+  focusedGroupCodeRowKey: any;
   groupCodeList: any[] = [
     {
       cmnGrpCd: 'test01',
@@ -65,6 +73,8 @@ export class CodeManagerComponent implements AfterViewInit {
     }
   ];
 
+  currentGroupCode: GroupCodeForm | null = null;
+
   groupCodeForm: GroupCodeForm;
 
   selectedItemKeys: any[] = [];
@@ -82,7 +92,7 @@ export class CodeManagerComponent implements AfterViewInit {
   statuses: any[] = [];
 
   constructor(
-    
+    private codeManagerService: CodeManagerService
   ) {
     this.showColon = false;
     this.minColWidth = 300;
@@ -158,12 +168,16 @@ export class CodeManagerComponent implements AfterViewInit {
     e.toolbarOptions.items[0].showText = 'always';
 
     e.toolbarOptions.items.push({
-        location: "after",
-        template: "deleteButton"
+        location: 'after',
+        template: 'deleteButton'
     });
   }
 
   onSubmitHandler(event: Event) {
+    if (this.groupSearchForm.cmnGrpCd.trim() === '') {
+      alert('Please enter the group code.', 'Warning');
+      return;
+    }
     console.log('onSubmitHandler : ', this.groupSearchForm);
   }
 
@@ -172,12 +186,64 @@ export class CodeManagerComponent implements AfterViewInit {
     console.log('onInputResetHandler : ');
   }
 
-  onFocusedRowChangedHandler(event: any) {
-    this.groupCodeForm = event.row.data;
-    console.log('onFocusedRowChangedHandler : ', this.groupCodeForm);
+  onFocusedRowChangingHandler(e: any) {
+    const rowsCount = e.component.getVisibleRows().length,
+        pageCount = e.component.pageCount(),
+        pageIndex = e.component.pageIndex(),
+        key = e.event && e.event.key;
+
+    if(key && e.prevRowIndex === e.newRowIndex) {
+        if(e.newRowIndex === rowsCount - 1 && pageIndex < pageCount - 1) {
+            e.component.pageIndex(pageIndex + 1).done(function() {
+                e.component.option('focusedRowIndex', 0);
+            });
+        } else if(e.newRowIndex === 0 && pageIndex > 0) {
+            e.component.pageIndex(pageIndex - 1).done(function() {
+                e.component.option('focusedRowIndex', rowsCount - 1);
+            });
+        }
+    }
+
+    // if(e.prevRowIndex !== e.newRowIndex) {
+    //   if (sha1(this.groupCodeForm) !== sha1(this.groupCodeList[e.prevRowIndex])) {
+    //     const result: any = confirm('Are you sure?', 'Confirm changes');
+    //     result.done((dialogResult: any) => {
+    //       const currentCode = 'test01';
+    //       console.log('currentCode : ', currentCode);
+    //       setTimeout(() => {
+    //         this.focusedGroupCodeRowKey = currentCode;
+    //         e.component.pageIndex(pageIndex - 1).done(() => {
+    //             e.component.option('focusedRowIndex', dialogResult ? e.newRowIndex : e.prevRowIndex);
+    //         });
+    //       }, 300);
+    //     });
+    //   }
+    // }
+
+    console.log('onFocusedRowChangingHandler : ', key, e.prevRowIndex, e.newRowIndex);
   }
 
-  onRegisterHandler(event: Event) {
+  onFocusedRowChangedHandler(event: any) {
+    if (this.currentGroupCode) {
+      if (sha1(this.currentGroupCode) !== sha1(this.groupCodeForm)) {
+        console.log('change : ', this.currentGroupCode, this.groupCodeForm);
+        const result: any = confirm('Are you sure?', 'Confirm');
+        result.done((dialogResult: any) => {
+          const currentCode = 'test01';
+          console.log('currentCode : ', currentCode);
+          setTimeout(() => {
+            this.focusedGroupCodeRowKey = currentCode;
+          }, 300);
+          // alert(dialogResult ? 'Confirmed' : 'Canceled');
+        });
+      }
+    }
+    this.currentGroupCode = event.row.data;
+    this.groupCodeForm = {...event.row.data};
+    console.log('onFocusedRowChangedHandler : ', event, this.focusedGroupCodeRowKey);
+  }
+
+  onNewRegisterHandler(event: Event) {
     this.groupCodeForm = {
       cmnGrpCd: '',
       cmnGrpCdNm: '',
@@ -197,7 +263,23 @@ export class CodeManagerComponent implements AfterViewInit {
     console.log('onRegisterHandler : ');
   }
 
-  onSubmitBuGroupCodeHandler(event: Event) {
+  onSubmitByGroupCodeHandler(event: Event) {
+    const result: any = confirm('Would you like to register?', 'Confirm');
+    result.done((dialogResult: any) => {
+      if (dialogResult) {
+
+      }
+    });
+    console.log('onSubmitHandler : ', this.groupCodeForm);
+  }
+
+  onDeleteByGroupCodeHandler(event: Event) {
+    const result: any = confirm('Would you like to Delete?', 'Confirm');
+    result.done((dialogResult: any) => {
+      if (dialogResult) {
+
+      }
+    });
     console.log('onSubmitHandler : ', this.groupCodeForm);
   }
 }
