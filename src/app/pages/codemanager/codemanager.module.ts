@@ -1,4 +1,4 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   DxSelectBoxModule,
@@ -8,7 +8,9 @@ import {
   DxButtonModule,
   DxRadioGroupModule,
   DxDataGridModule,
-  DxPopupModule
+  DxPopupModule,
+  DxTemplateModule,
+  DxListModule
 } from 'devextreme-angular';
 import { CodeManagerComponent } from './codemanager.component';
 import { CodeManagerRoutingModule } from './codemanager-routing.module';
@@ -24,9 +26,11 @@ import { CodeManagerRoutingModule } from './codemanager-routing.module';
     DxButtonModule,
     DxRadioGroupModule,
     DxDataGridModule,
-    DxPopupModule
+    DxTemplateModule,
+    DxPopupModule,
+    DxListModule
   ],
   declarations: [CodeManagerComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class CodeManagerModule { }

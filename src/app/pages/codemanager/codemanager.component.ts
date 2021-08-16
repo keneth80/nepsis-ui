@@ -11,6 +11,7 @@ type CodeForm = {
   cmnGrpCd: string;
   cmnCd: string;
   cmnCdNm: string;
+  cmnCdDesc: string;
   srtOdr: number;
   useYn: string;
   rmk: string;
@@ -53,7 +54,15 @@ export class CodeManagerComponent implements AfterViewInit {
 
   selectedItemKeys: any[] = [];
 
-  dataSource: ArrayStore;
+  codeList: ArrayStore;
+  editorOptions: any;
+
+  ynList = [
+    'Y',
+    'N'
+  ];
+
+  statuses: any[] = [];
 
   constructor(
     
@@ -71,10 +80,34 @@ export class CodeManagerComponent implements AfterViewInit {
       codeList: []
     };
 
-    this.dataSource = new ArrayStore({
+    this.codeList = new ArrayStore({
       key: 'cmnCd',
-      data: []
-  });
+      data: [
+        {
+          cmnGrpCd: 'test01',
+          cmnCd: 'test02',
+          cmnCdNm: 'test',
+          cmnCdDesc: 'test',
+          srtOdr: 1,
+          useYn: 'Y',
+          rmk: 'insert',
+          type: '',
+        }
+      ]
+    });
+
+    this.editorOptions = {
+      itemTemplate: 'ynTemplete'
+    };
+
+    this.statuses = [
+      {
+        id: 'Y', name: 'Y'
+      },
+      {
+        id: 'N', name: 'N'
+      }
+    ]
 
     this.gridPriority = [
       { name: 'High', value: 4 },

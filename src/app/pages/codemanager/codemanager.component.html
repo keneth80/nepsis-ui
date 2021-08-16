@@ -43,61 +43,13 @@
             <dxo-pager [showPageSizeSelector]="true" [showInfo]="true"></dxo-pager>
             <dxo-filter-row [visible]="true"></dxo-filter-row>
 
-            <dxi-column
-              dataField="Task_ID"
-              [width]="90"
-              [hidingPriority]="2">
-            </dxi-column>
-            <dxi-column
-              dataField="Task_Subject"
-              [width]="190"
-              caption="Subject"
-              [hidingPriority]="8">
-            </dxi-column>
-            <dxi-column
-              dataField="Task_Status"
-              caption="Status"
-              [hidingPriority]="6">
-            </dxi-column>
-            <dxi-column
-              dataField="Task_Priority"
-              caption="Priority"
-              [hidingPriority]="5">
-              <dxo-lookup
-                [dataSource]="gridPriority"
-                valueExpr="value"
-                displayExpr="name">
-              </dxo-lookup>
-            </dxi-column>
-            <dxi-column
-              dataField="ResponsibleEmployee.Employee_Full_Name"
-              caption="Assigned To"
-              [allowSorting]="false"
-              [hidingPriority]="7">
-            </dxi-column>
-            <dxi-column
-              dataField="Task_Start_Date"
-              caption="Start Date"
-              dataType="date"
-              [hidingPriority]="3">
-            </dxi-column>
-            <dxi-column
-              dataField="Task_Due_Date"
-              caption="Due Date"
-              dataType="date"
-              [hidingPriority]="4">
-            </dxi-column>
-            <dxi-column
-              dataField="Task_Priority"
-              caption="Priority"
-              name="Priority"
-              [hidingPriority]="1">
-            </dxi-column>
-            <dxi-column
-              dataField="Task_Completion"
-              caption="Completion"
-              [hidingPriority]="0">
-            </dxi-column>
+            <dxi-column dataField="cmnGrpCd" caption="Group Code" [width]="120"></dxi-column>
+            <dxi-column dataField="cmnGrpCdNm" caption="Group Code Name" [width]="190"></dxi-column>
+            <dxi-column dataField="cmnCdStep" caption="Code Step" [width]="100"></dxi-column>
+            <dxi-column dataField="cmnCdDesc" caption="Description"></dxi-column>
+            <dxi-column dataField="cmnCdJobCode" caption="Hob Code" [width]="100"></dxi-column>
+            <dxi-column dataField="cmnHrkCode" caption="Hrk Code" [width]="120"></dxi-column>
+            <dxi-column dataField="useYn" caption="Delete Y/N" [width]="100"></dxi-column>
           </dx-data-grid>
         </div>
       </div>
@@ -193,7 +145,7 @@
       <div class="col-8">
         <div class="dx-card responsive-paddings code-data-grid-height">
           <dx-data-grid 
-            [dataSource]="dataSource"
+            [dataSource]="codeList"
             [showBorders]="true"
             (onSelectionChanged)="selectionChanged($event)"
             (onToolbarPreparing)="onToolbarPreparing($event)">
@@ -207,14 +159,20 @@
             </dxo-editing>
             <dxo-selection mode="multiple"></dxo-selection>
             
-            <dxi-column dataField="Prefix" caption="Title" [width]="55"></dxi-column>
-            <dxi-column dataField="FirstName"></dxi-column>
-            <dxi-column dataField="LastName"></dxi-column>
-            <dxi-column dataField="Position" [width]="170"></dxi-column>
-            <dxi-column
-                dataField="BirthDate"
-                dataType="date">
+            <dxi-column dataField="cmnCd" caption="Code" [width]="55"></dxi-column>
+            <dxi-column dataField="cmnCdNm" caption="Code Name" [width]="130"></dxi-column>
+            <dxi-column dataField="cmnCdDesc" caption="Code Desc"></dxi-column>
+            <dxi-column dataField="useYn" caption="Delete Y/N"
+              [width]="100"
+              [editorOptions]="editorOptions">
+              <dxo-lookup
+                [dataSource]="statuses"
+                displayExpr="name"
+                valueExpr="id">
+              </dxo-lookup>
             </dxi-column>
+            <!-- <dxi-column dataField="useYn" caption="Delete Y/N" cellTemplate="cellTemplate" [width]="100"></!--> -->
+            <dxi-column dataField="srtOdr" caption="Sort Order" [width]="100"></dxi-column>
     
             <dx-button
                 *dxTemplate="let data of 'deleteButton'"
@@ -223,7 +181,28 @@
                 icon="trash"
                 text="Delete Selected Records">
             </dx-button>
-    
+            
+            <div *dxTemplate="let status of 'ynTemplete'">
+              <div *ngIf="status === null"; else elseBlock>
+                  <span>(All)</span>
+              </div>
+              <div dx-template #elseBlock>
+                <span class="middle">{{status.name}}</span>
+              </div>
+              <!-- <dx-radio-group
+                [items]="ynList"
+                [value]="yn"
+                layout="horizontal">
+              </dx-radio-group> -->
+            </div>
+
+            <div *dxTemplate="let data of 'cellTemplate'">
+              <dx-radio-group
+                [items]="ynList"
+                [value]="data"
+                layout="horizontal">
+              </dx-radio-group>
+            </div>
           </dx-data-grid>
         </div>
       </div>
