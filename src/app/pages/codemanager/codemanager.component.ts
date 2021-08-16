@@ -21,7 +21,10 @@ type CodeForm = {
 type GroupCodeForm = {
   cmnGrpCd: string;
   cmnGrpCdNm: string;
-  cdDesc: string;
+  cmnCdStep: number;
+  cmnCdDesc: string;
+  cmnCdJobCode: string;
+  cmnHrkCode: string;
   useYn: string;
   type: string;
   codeList: CodeForm[];
@@ -34,23 +37,35 @@ type GroupCodeForm = {
 
 export class CodeManagerComponent implements AfterViewInit {
   groupSearchForm: GroupSearchForm;
-  groupCodeForm: GroupCodeForm;
-  positions: string[];
-  rules: Object;
-  colCountByScreen: object;
   showColon: boolean;
   minColWidth: number;
   colCount: number;
-  valueChangeEvents: any[] = [];
-  value: string = '';
-  priorities: string[];
-  priority: string;
-  data: any;
-  currentData: string[] = [];
+  colCountByScreen: any;
 
-  gridPriority: any[];
+  groupCodeList: any[] = [
+    {
+      cmnGrpCd: 'test01',
+      cmnGrpCdNm: 'test01',
+      cmnCdStep: 1,
+      cmnCdDesc: 'test',
+      cmnCdJobCode: '01',
+      cmnHrkCode: '0001',
+      useYn: 'Y',
+      type: 'update',
+    },
+    {
+      cmnGrpCd: 'test02',
+      cmnGrpCdNm: 'test02',
+      cmnCdStep: 1,
+      cmnCdDesc: 'test2',
+      cmnCdJobCode: '02',
+      cmnHrkCode: '0002',
+      useYn: 'Y',
+      type: 'update',
+    }
+  ];
 
-  groupCodeList: any[] = [];
+  groupCodeForm: GroupCodeForm;
 
   selectedItemKeys: any[] = [];
 
@@ -62,19 +77,33 @@ export class CodeManagerComponent implements AfterViewInit {
     'N'
   ];
 
+  jobCodeList: any = [];
+
   statuses: any[] = [];
 
   constructor(
     
   ) {
+    this.showColon = false;
+    this.minColWidth = 300;
+    this.colCount = 2;
+    this.colCountByScreen = {
+      xs: 1,
+      sm: 2,
+      md: 3,
+      lg: 4
+    };
     this.groupSearchForm = {
       cmnGrpCd: ''
     };
 
     this.groupCodeForm = {
-      cmnGrpCd: 'CUST_TYPE_CD',
+      cmnGrpCd: '',
       cmnGrpCdNm: '',
-      cdDesc: '',
+      cmnCdStep: 1,
+      cmnCdDesc: '',
+      cmnCdJobCode: '',
+      cmnHrkCode: '',
       useYn: 'Y',
       type: 'insert',
       codeList: []
@@ -107,30 +136,7 @@ export class CodeManagerComponent implements AfterViewInit {
       {
         id: 'N', name: 'N'
       }
-    ]
-
-    this.gridPriority = [
-      { name: 'High', value: 4 },
-      { name: 'Urgent', value: 3 },
-      { name: 'Normal', value: 2 },
-      { name: 'Low', value: 1 }
     ];
-
-    this.rules = { 'X': /[02-9]/ };
-    this.showColon = false;
-    this.minColWidth = 300;
-    this.colCount = 2;
-    this.colCountByScreen = {
-      xs: 1,
-      sm: 2,
-      md: 3,
-      lg: 4
-    };
-    this.priorities = [
-      'Y',
-      'N'
-    ];
-    this.priority = this.priorities[2];
   }
 
   ngAfterViewInit() {
@@ -164,6 +170,31 @@ export class CodeManagerComponent implements AfterViewInit {
   onInputResetHandler(event: Event) {
     this.groupSearchForm.cmnGrpCd = '';
     console.log('onInputResetHandler : ');
+  }
+
+  onFocusedRowChangedHandler(event: any) {
+    this.groupCodeForm = event.row.data;
+    console.log('onFocusedRowChangedHandler : ', this.groupCodeForm);
+  }
+
+  onRegisterHandler(event: Event) {
+    this.groupCodeForm = {
+      cmnGrpCd: '',
+      cmnGrpCdNm: '',
+      cmnCdStep: 1,
+      cmnCdDesc: '',
+      cmnCdJobCode: '',
+      cmnHrkCode: '',
+      useYn: 'Y',
+      type: 'insert',
+      codeList: []
+    };
+
+    this.codeList = new ArrayStore({
+      key: 'cmnCd',
+      data: []
+    });
+    console.log('onRegisterHandler : ');
   }
 
   onSubmitBuGroupCodeHandler(event: Event) {

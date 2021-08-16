@@ -20,4 +20,16 @@
   height: 415px;
 }
 
+.center-container {
+  position: relative;
+  display: block;
+  height: calc(100vh - 230px);
+  overflow: auto;
+}
+
+.bottom-button-container {
+  display: block;
+  margin-top: 10px;
+}
+
 
