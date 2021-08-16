@@ -5,7 +5,8 @@ import ArrayStore from 'devextreme/data/array_store';
 import { sha1 } from 'object-hash';
 import { confirm } from 'devextreme/ui/dialog';
 import { CodeManagerService } from './codemanager.service';
-import { alert } from "devextreme/ui/dialog"
+import { alert } from 'devextreme/ui/dialog';
+import notify from 'devextreme/ui/notify';
 
 type GroupSearchForm = {
   cmnGrpCd: string;
@@ -91,6 +92,11 @@ export class CodeManagerComponent implements AfterViewInit {
 
   statuses: any[] = [];
 
+  popupVisible = false;
+  emailButtonOptions: any;
+  closeButtonOptions: any;
+  positionOf: string;
+
   constructor(
     private codeManagerService: CodeManagerService
   ) {
@@ -147,6 +153,30 @@ export class CodeManagerComponent implements AfterViewInit {
         id: 'N', name: 'N'
       }
     ];
+
+    this.positionOf = '#compareButton';
+
+    // popup test
+    this.emailButtonOptions = {
+      icon: 'email',
+      text: 'Send',
+      onClick: (e: any) => {
+        const message = `Test`;
+        notify({
+              message: message,
+              position: {
+                  my: 'center top',
+                  at: 'center top'
+              }
+        }, 'success', 3000);
+      }
+    };
+    this.closeButtonOptions = {
+        text: 'Close',
+        onClick: (e: any) => {
+            this.popupVisible = false;
+        }
+    };
   }
 
   ngAfterViewInit() {
@@ -281,5 +311,13 @@ export class CodeManagerComponent implements AfterViewInit {
       }
     });
     console.log('onSubmitHandler : ', this.groupCodeForm);
+  }
+
+  detailsButtonMouseEnter() {
+    this.positionOf = `#compareButton`;
+  }
+
+  onShowVerificationHandler(event: Event) {
+    this.popupVisible = true;
   }
 }

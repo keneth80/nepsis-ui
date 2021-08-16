@@ -79,8 +79,16 @@
                   <div class="dx-field-label">Group Code<span class="dx-field-item-required-mark">&nbsp;*</span></div>
                   <div class="dx-field-value">
                     <div class="form-grid middle second"><!--form-grid middle second-->
-                      <div><dx-text-box [(value)]="groupCodeForm.cmnGrpCd"></dx-text-box></div>
-                      <div><button class="btn back-cyan medium">검증</button></div>
+                      <div>
+                        <dx-text-box [(value)]="groupCodeForm.cmnGrpCd"></dx-text-box>
+                      </div>
+                      <div>
+                        <button class="btn back-cyan medium"
+                          [id]="'compareButton'"
+                          (click)="onShowVerificationHandler($event)">
+                          검증
+                        </button>
+                      </div>
                     </div><!--form-grid middle second-->
                   </div>
                 </div>
@@ -229,5 +237,55 @@
     </div>
     <!--button-area-->
   </div>
+  <dx-popup
+    [width]="300"
+    [height]="280"
+    [showTitle]="true"
+    title="Information"
+    [dragEnabled]="false"
+    [closeOnOutsideClick]="true"
+    [showCloseButton]="false"
+    container=".dx-viewport"
+    [(visible)]="popupVisible">
+    <dxi-toolbar-item
+        widget="dxButton"
+        toolbar="bottom"
+        location="before"
+        [options]="emailButtonOptions">
+    </dxi-toolbar-item>
+    <dxi-toolbar-item
+        widget="dxButton"
+        toolbar="bottom"
+        location="after"
+        [options]="closeButtonOptions">
+    </dxi-toolbar-item>
+    <dxo-position
+        at="bottom"
+        my="center"
+        [of]="positionOf">
+    </dxo-position>
+    <div *dxTemplate="let data of 'content'">
+        <p>
+            Full Name:
+            <span>Kenneth</span>
+        </p>
+        <p>
+            Birth Date:
+            <span></span>
+        </p>
+        <p>
+            Address:
+            <span></span>
+        </p>
+        <p>
+            Hire Date:
+            <span></span>
+        </p>
+        <p>
+            Position:
+            <span></span>
+        </p>
+    </div>
+</dx-popup>
   <!--//flex-wrap-->
 
