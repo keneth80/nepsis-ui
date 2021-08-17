@@ -85,7 +85,7 @@
                       <div>
                         <button class="btn back-cyan medium"
                           [id]="'compareButton'"
-                          (click)="onShowVerificationHandler($event)">
+                          (click)="onVerificationHandler($event)">
                           검증
                         </button>
                       </div>
@@ -214,13 +214,13 @@
                 </dx-radio-group> -->
               </div>
   
-              <div *dxTemplate="let data of 'cellTemplate'">
+              <!-- <div *dxTemplate="let data of 'cellTemplate'">
                 <dx-radio-group
                   [items]="ynList"
                   [value]="data"
                   layout="horizontal">
                 </dx-radio-group>
-              </div>
+              </div> -->
             </dx-data-grid>
           </div>
         </div>

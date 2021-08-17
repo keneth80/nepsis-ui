@@ -11,6 +11,7 @@ import { ServiceModule } from './shared/services/service.module';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthGuard } from './shared/gaurd/auth.gaurd';
 import { AuthenticationService } from './shared/services/auth/authentication.service';
+import { APP_BASE_HREF } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,13 @@ import { AuthenticationService } from './shared/services/auth/authentication.ser
     ServiceModule,
     HttpClientModule
   ],
-  providers: [AuthGuard, AuthenticationService, ScreenService, AppInfoService],
+  providers: [
+    AuthGuard,
+    AuthenticationService,
+    ScreenService,
+    AppInfoService,
+    {provide: APP_BASE_HREF, useValue: '/views'}
+  ],
   bootstrap: [AppComponent],
   schemas: [
     NO_ERRORS_SCHEMA,

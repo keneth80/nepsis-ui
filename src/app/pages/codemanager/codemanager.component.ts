@@ -44,13 +44,17 @@ type GroupCodeForm = {
 })
 
 export class CodeManagerComponent implements AfterViewInit {
+  // 검색 영역 form
   groupSearchForm: GroupSearchForm;
+  // 검색 input 설정 정보
   showColon: boolean;
   minColWidth: number;
   colCount: number;
   colCountByScreen: any;
 
+  // 그룹 코드 그리드에서 포커 변경 시 변경되는 key
   focusedGroupCodeRowKey: any;
+  // 그룹 코드 리스트 데이터
   groupCodeList: any[] = [
     {
       cmnGrpCd: 'test01',
@@ -74,24 +78,38 @@ export class CodeManagerComponent implements AfterViewInit {
     }
   ];
 
+  // 선택 된 그룹코드 데이터
   currentGroupCode: GroupCodeForm | null = null;
 
+  // 그룹코드 에디팅 form
   groupCodeForm: GroupCodeForm;
-
-  selectedItemKeys: any[] = [];
-
-  codeList: ArrayStore;
-  editorOptions: any;
-
+  // 그룹코드 검증 여부를 알기 위함 (검증은 처음 등록 할때만 가능하다.)
+  groupCodeFormIsInsert = false;
+  // 그룹코드 등록 영역의 job combobox
+  jobCodeList: any = [];
+  // 그룹코드 등록 영역의 delete yn
   ynList = [
     'Y',
     'N'
   ];
 
-  jobCodeList: any = [];
+  // 하위 코드 리스트 선택된 아이템 리스트들
+  selectedItemKeys: any[] = [];
+  // 하위 코드 리스트 데이터
+  codeList: ArrayStore;
+  // 에디터블 그리드에서 컬럼의 옵션 (delete yn)
+  editorOptions: any;
+  // delete yn
+  statuses: any[] = [
+    {
+      id: 'Y', name: 'Y'
+    },
+    {
+      id: 'N', name: 'N'
+    }
+  ];
 
-  statuses: any[] = [];
-
+  // popup 관련설정들
   popupVisible = false;
   emailButtonOptions: any;
   closeButtonOptions: any;
@@ -144,15 +162,6 @@ export class CodeManagerComponent implements AfterViewInit {
     this.editorOptions = {
       itemTemplate: 'ynTemplete'
     };
-
-    this.statuses = [
-      {
-        id: 'Y', name: 'Y'
-      },
-      {
-        id: 'N', name: 'N'
-      }
-    ];
 
     this.positionOf = '#compareButton';
 
@@ -317,7 +326,7 @@ export class CodeManagerComponent implements AfterViewInit {
     this.positionOf = `#compareButton`;
   }
 
-  onShowVerificationHandler(event: Event) {
-    this.popupVisible = true;
+  onVerificationHandler(event: Event) {
+    // this.popupVisible = true;
   }
 }

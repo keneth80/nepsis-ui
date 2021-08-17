@@ -106,7 +106,8 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
+              "namedChunks": true,
+              "inlineStyleLanguage": "scss"
             }
           },
           "defaultConfiguration": "production"

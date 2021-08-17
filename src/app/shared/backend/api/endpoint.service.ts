@@ -20,13 +20,14 @@ export class EndpointService {
   login(userId: string, password: string) {
     return this.http.post<any>(`${this.globalVarialbe.remoteUrl}/login`, 
       { username: userId, password },
-      { observe: 'response' }
+      { withCredentials: true, observe: 'response' }
     )
     .pipe(
         first(),
         // backend model mapping
-        map((request: any) => { // Response<AuthModel>
-          console.log('request : ', request);
+        map((response: any) => { // Response<AuthModel>
+          const token = response.headers.get('Authorization');
+          console.log('request : ', response, token);
           // TODO: token setting
           // const data: AuthModel = AuthMapper.authModelMapper(request);
           // if (data && data.access_token) {
@@ -36,7 +37,7 @@ export class EndpointService {
           // }
           return {
             userName: userId,
-            token: request.token,
+            token,
           } as UserModel
         }),
         // frontend model mapping
