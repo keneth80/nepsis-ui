@@ -1,4 +1,4 @@
-import { NgModule, Component, ViewChild, AfterViewInit } from '@angular/core';
+import { NgModule, Component, ViewChild, AfterViewInit, OnInit } from '@angular/core';
 import 'devextreme/data/odata/store';
 import { DxFormComponent } from 'devextreme-angular';
 import ArrayStore from 'devextreme/data/array_store';
@@ -7,6 +7,8 @@ import { confirm } from 'devextreme/ui/dialog';
 import { CodeManagerService } from './codemanager.service';
 import { alert } from 'devextreme/ui/dialog';
 import notify from 'devextreme/ui/notify';
+import { BaseComponent } from '../../shared/components/base.component';
+import { GroupCodeModel, CodeModel } from '../../shared/models/group-code-model';
 
 type GroupSearchForm = {
   cmnGrpCd: string;
@@ -26,11 +28,11 @@ type CodeForm = {
 type GroupCodeForm = {
   cmnGrpCd: string;
   cmnGrpCdNm: string;
-  cmnCdStep: number;
-  cmnCdDesc: string;
-  cmnCdJobCode: string;
-  cmnHrkCode: string;
-  useYn: string;
+  cmnCdStep: string;
+  cdDesc: string;
+  jobStCd: string;
+  hrkCd: string;
+  delYn: string;
   type: string;
   codeList: CodeForm[];
 }
@@ -43,7 +45,7 @@ type GroupCodeForm = {
   ]
 })
 
-export class CodeManagerComponent implements AfterViewInit {
+export class CodeManagerComponent extends BaseComponent implements OnInit, AfterViewInit {
   // 검색 영역 form
   groupSearchForm: GroupSearchForm;
   // 검색 input 설정 정보
@@ -55,31 +57,10 @@ export class CodeManagerComponent implements AfterViewInit {
   // 그룹 코드 그리드에서 포커 변경 시 변경되는 key
   focusedGroupCodeRowKey: any;
   // 그룹 코드 리스트 데이터
-  groupCodeList: any[] = [
-    {
-      cmnGrpCd: 'test01',
-      cmnGrpCdNm: 'test01',
-      cmnCdStep: 1,
-      cmnCdDesc: 'test',
-      cmnCdJobCode: '01',
-      cmnHrkCode: '0001',
-      useYn: 'Y',
-      type: 'update',
-    },
-    {
-      cmnGrpCd: 'test02',
-      cmnGrpCdNm: 'test02',
-      cmnCdStep: 1,
-      cmnCdDesc: 'test2',
-      cmnCdJobCode: '02',
-      cmnHrkCode: '0002',
-      useYn: 'Y',
-      type: 'update',
-    }
-  ];
+  groupCodeList: GroupCodeModel[] = [];
 
   // 선택 된 그룹코드 데이터
-  currentGroupCode: GroupCodeForm | null = null;
+  currentGroupCode: GroupCodeModel;
 
   // 그룹코드 에디팅 form
   groupCodeForm: GroupCodeForm;
@@ -118,6 +99,7 @@ export class CodeManagerComponent implements AfterViewInit {
   constructor(
     private codeManagerService: CodeManagerService
   ) {
+    super();
     this.showColon = false;
     this.minColWidth = 300;
     this.colCount = 2;
@@ -128,35 +110,24 @@ export class CodeManagerComponent implements AfterViewInit {
       lg: 4
     };
     this.groupSearchForm = {
-      cmnGrpCd: ''
+      cmnGrpCd: 'TEST03_GRP_CD'
     };
 
     this.groupCodeForm = {
       cmnGrpCd: '',
       cmnGrpCdNm: '',
-      cmnCdStep: 1,
-      cmnCdDesc: '',
-      cmnCdJobCode: '',
-      cmnHrkCode: '',
-      useYn: 'Y',
+      cmnCdStep: '1',
+      cdDesc: '',
+      jobStCd: '',
+      hrkCd: '',
+      delYn: 'Y',
       type: 'insert',
       codeList: []
     };
 
     this.codeList = new ArrayStore({
-      key: 'cmnCd',
-      data: [
-        {
-          cmnGrpCd: 'test01',
-          cmnCd: 'test02',
-          cmnCdNm: 'test',
-          cmnCdDesc: 'test',
-          srtOdr: 1,
-          useYn: 'Y',
-          rmk: 'insert',
-          type: '',
-        }
-      ]
+      key: 'code',
+      data: []
     });
 
     this.editorOptions = {
@@ -188,6 +159,25 @@ export class CodeManagerComponent implements AfterViewInit {
     };
   }
 
+  ngOnInit() {
+    this.subscription = this.codeManagerService.$groupCodeList.subscribe((groupCodeList: GroupCodeModel[]) => {
+      this.groupCodeList = groupCodeList;
+      if (groupCodeList.length) {
+        this.codeManagerService.retrieveCodeListByGroupCode(groupCodeList[0].code);
+      }
+    });
+
+    this.subscription = this.codeManagerService.$codeListByGroupCode.subscribe((codeList: CodeModel[]) => {
+      this.codeList = new ArrayStore({
+        key: 'code',
+        data: codeList
+      });
+      console.log('codeList : ', this.codeList);
+    });
+
+    this.codeManagerService.retrieveGroupCodeList(this.groupSearchForm.cmnGrpCd.trim());
+  }
+
   ngAfterViewInit() {
     // this.myform.instance.validate()
   }
@@ -212,11 +202,11 @@ export class CodeManagerComponent implements AfterViewInit {
     });
   }
 
-  onSubmitHandler(event: Event) {
-    if (this.groupSearchForm.cmnGrpCd.trim() === '') {
-      alert('Please enter the group code.', 'Warning');
-      return;
-    }
+  onSearchSubmitHandler(event: Event) {
+    // if (this.groupSearchForm.cmnGrpCd.trim() === '') {
+    //   alert('Please enter the group code.', 'Warning');
+    //   return;
+    // }
     console.log('onSubmitHandler : ', this.groupSearchForm);
   }
 
@@ -264,21 +254,32 @@ export class CodeManagerComponent implements AfterViewInit {
 
   onFocusedRowChangedHandler(event: any) {
     if (this.currentGroupCode) {
-      if (sha1(this.currentGroupCode) !== sha1(this.groupCodeForm)) {
-        console.log('change : ', this.currentGroupCode, this.groupCodeForm);
-        const result: any = confirm('Are you sure?', 'Confirm');
-        result.done((dialogResult: any) => {
-          const currentCode = 'test01';
-          console.log('currentCode : ', currentCode);
-          setTimeout(() => {
-            this.focusedGroupCodeRowKey = currentCode;
-          }, 300);
-          // alert(dialogResult ? 'Confirmed' : 'Canceled');
-        });
-      }
+      // if (sha1(this.currentGroupCode) !== sha1(this.groupCodeForm)) {
+      //   console.log('change : ', this.currentGroupCode, this.groupCodeForm);
+      //   const result: any = confirm('Are you sure?', 'Confirm');
+      //   result.done((dialogResult: any) => {
+      //     const currentCode = 'test01';
+      //     console.log('currentCode : ', currentCode);
+      //     setTimeout(() => {
+      //       this.focusedGroupCodeRowKey = currentCode;
+      //     }, 300);
+      //     // alert(dialogResult ? 'Confirmed' : 'Canceled');
+      //   });
+      // }
     }
     this.currentGroupCode = event.row.data;
-    this.groupCodeForm = {...event.row.data};
+
+    this.groupCodeForm = {
+      cmnGrpCd: this.currentGroupCode.code,
+      cmnGrpCdNm: this.currentGroupCode.codeName,
+      cmnCdStep: this.currentGroupCode.codeStep,
+      cdDesc: this.currentGroupCode.codeDescription,
+      jobStCd: this.currentGroupCode.jobCode,
+      hrkCd: this.currentGroupCode.hrkCode,
+      delYn: this.currentGroupCode.deleteYn,
+      type: 'update',
+      codeList: []
+    };
     console.log('onFocusedRowChangedHandler : ', event, this.focusedGroupCodeRowKey);
   }
 
@@ -286,11 +287,11 @@ export class CodeManagerComponent implements AfterViewInit {
     this.groupCodeForm = {
       cmnGrpCd: '',
       cmnGrpCdNm: '',
-      cmnCdStep: 1,
-      cmnCdDesc: '',
-      cmnCdJobCode: '',
-      cmnHrkCode: '',
-      useYn: 'Y',
+      cmnCdStep: '1',
+      cdDesc: '',
+      jobStCd: '',
+      hrkCd: '',
+      delYn: 'Y',
       type: 'insert',
       codeList: []
     };

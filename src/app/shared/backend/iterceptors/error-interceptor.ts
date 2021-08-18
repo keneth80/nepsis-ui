@@ -3,12 +3,14 @@ import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/c
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-// import { AuthenticationService } from '../../service/auth/authentication.service';
+import { AuthenticationService } from '../../services/auth/authentication.service';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
   constructor(
-    // private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private route: Router
   ) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
@@ -26,10 +28,14 @@ export class ErrorInterceptor implements HttpInterceptor {
           } else if (err.status === 401) {
               error.status = 401;
               error.name = 'UNAUTHORIZED';
-              error.message = 'Please Login!';
-
-              // auto logout if 401 response returned from api
-              // this.authenticationService.logout();
+              console.log('this.route.url : ', this.route.url);
+              if (this.route.url === '/login-form') {
+                error.message = 'Please check your ID or password.';
+              } else {
+                error.message = 'not authorization, please login!';
+                // auto logout if 401 response returned from api
+                // this.authenticationService.logout();
+              }
           }
 
           return throwError(error);

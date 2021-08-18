@@ -21,7 +21,7 @@
               </dxi-item>
             </dxi-item>
             <dxi-item class="form-search-btn">
-              <button class="btn back-cyan small" (click)="onSubmitHandler($event)">Search</button>
+              <button class="btn back-cyan small" (click)="onSearchSubmitHandler($event)">Search</button>
               <button class="btn small none i-reset" (click)="onInputResetHandler($event)"></button>
             </dxi-item>
           </dx-form>
@@ -45,19 +45,19 @@
               [(focusedRowKey)]="focusedGroupCodeRowKey"
               (onFocusedRowChanging)="onFocusedRowChangingHandler($event)"
               (onFocusedRowChanged)="onFocusedRowChangedHandler($event)"
-              keyExpr="cmnGrpCd">
+              keyExpr="code">
 
               <dxo-paging [pageSize]="10"></dxo-paging>
               <dxo-pager [showPageSizeSelector]="true" [showInfo]="true"></dxo-pager>
               <dxo-filter-row [visible]="true"></dxo-filter-row>
 
-              <dxi-column dataField="cmnGrpCd" caption="Group Code" [width]="120"></dxi-column>
-              <dxi-column dataField="cmnGrpCdNm" caption="Group Code Name" [width]="190"></dxi-column>
-              <dxi-column dataField="cmnCdStep" caption="Code Step" [width]="100"></dxi-column>
-              <dxi-column dataField="cmnCdDesc" caption="Description"></dxi-column>
-              <dxi-column dataField="cmnCdJobCode" caption="Hob Code" [width]="100"></dxi-column>
-              <dxi-column dataField="cmnHrkCode" caption="Hrk Code" [width]="120"></dxi-column>
-              <dxi-column dataField="useYn" caption="Delete Y/N" [width]="100"></dxi-column>
+              <dxi-column dataField="code" caption="Group Code" [width]="120"></dxi-column>
+              <dxi-column dataField="codeName" caption="Group Code Name" [width]="190"></dxi-column>
+              <dxi-column dataField="codeStep" caption="Code Step" [width]="100"></dxi-column>
+              <dxi-column dataField="codeDescription" caption="Description"></dxi-column>
+              <dxi-column dataField="jobCode" caption="Job Code" [width]="100"></dxi-column>
+              <dxi-column dataField="hrkCode" caption="Hrk Code" [width]="120"></dxi-column>
+              <dxi-column dataField="deleteYn" caption="Delete Y/N" [width]="100"></dxi-column>
             </dx-data-grid>
           </div>
         </div>
@@ -105,7 +105,7 @@
                   <div class="dx-field-label">Description</div>
                   <div class="dx-field-value">
                     <dx-text-area
-                      [height]="70" [(value)]="groupCodeForm.cmnCdDesc">
+                      [height]="70" [(value)]="groupCodeForm.cdDesc">
                     </dx-text-area>
                   </div>
                 </div>
@@ -116,7 +116,7 @@
                   <div class="dx-field-value">
                     <dx-select-box
                       [items]="jobCodeList"
-                      [(value)]="groupCodeForm.cmnCdJobCode"
+                      [(value)]="groupCodeForm.jobStCd"
                       valueExpr="id"
                       displayExpr="name">
                     </dx-select-box>
@@ -129,7 +129,7 @@
                   <div class="dx-field-value">
                     <dx-radio-group
                       [items]="ynList"
-                      [(value)]="groupCodeForm.useYn"
+                      [(value)]="groupCodeForm.delYn"
                       layout="horizontal">
                     </dx-radio-group>
                   </div>
@@ -142,7 +142,7 @@
                     <div class="form-grid middle thirds"><!--form-grid middle thirds-->
                       <!-- <div><dx-text-box class="i-search" value=""></dx-text-box></div>
                       <div>/</div> -->
-                      <div><dx-text-box [(value)]="groupCodeForm.cmnHrkCode"></dx-text-box></div>
+                      <div><dx-text-box [(value)]="groupCodeForm.hrkCd"></dx-text-box></div>
                     </div><!--form-grid middle thirds-->
                   </div>
                 </div>
@@ -176,11 +176,11 @@
                   [allowDeleting]="true">
               </dxo-editing>
               <dxo-selection mode="multiple"></dxo-selection>
-              
-              <dxi-column dataField="cmnCd" caption="Code" [width]="55"></dxi-column>
-              <dxi-column dataField="cmnCdNm" caption="Code Name" [width]="130"></dxi-column>
-              <dxi-column dataField="cmnCdDesc" caption="Code Desc"></dxi-column>
-              <dxi-column dataField="useYn" caption="Delete Y/N"
+
+              <dxi-column dataField="code" caption="Code" [width]="55"></dxi-column>
+              <dxi-column dataField="codeName" caption="Code Name" [width]="130"></dxi-column>
+              <dxi-column dataField="codeDescription" caption="Code Desc"></dxi-column>
+              <dxi-column dataField="delYn" caption="Delete Y/N"
                 [width]="100"
                 [editorOptions]="editorOptions">
                 <dxo-lookup

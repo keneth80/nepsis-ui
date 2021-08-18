@@ -9,6 +9,19 @@ import { EndpointService } from '../../backend/api/endpoint.service';
 import { UserModel } from '../../models/user-model';
 import { Router } from '@angular/router';
 
+const tokenParse = (token: string): UserModel => {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+  const payload = JSON.parse(jsonPayload);
+  const tempModel = JSON.parse(payload.sub);
+  return {
+    role: tempModel.role,
+    userName: tempModel.username,
+    name: tempModel.name
+  } as UserModel;
+}
+
 @Injectable()
 export class AuthenticationService {
   private PRE_FIX: string = '';
@@ -46,11 +59,9 @@ export class AuthenticationService {
     return this.loginErrorSubject.asObservable();
   }
 
-  get currentUserValue(): any { // UserModel
-      // TODO: login 시 token user data도 포함 시킬지 문의
-      const decodeObject: any = this.jwtHelper.decodeToken(this.getToken() || '');
-      return null;
-      // return <UserModel>JSON.parse(localStorage.getItem('currentUser'));
+  get currentUserValue(): UserModel { // UserModel
+      const decodeObject: UserModel = this.jwtHelper.decodeToken(this.getToken() || '');
+      return decodeObject;
   }
 
   get token(): string | null {
@@ -61,31 +72,22 @@ export class AuthenticationService {
   login(userId: string, password: string) {
     this.endpoint.login(userId, password)
         .subscribe(
-            (data: UserModel) => {
-                this.setToken(data.token || '');
-                // this.setRefreshToken(data.refreshToken);
-                this.currentUserModel = data;
-                this.currentUserSubject.next(data);
+            (token: string) => {
+                this.setToken(token.replace('Bearer ', ''));
+                this.currentUserModel = tokenParse(this.getToken());
+                this.currentUserSubject.next(this.currentUserModel);
             },
             (error: any) => {
                 if (console && console.log) {
                     console.log('login fail : ', error);
                 }
                 // TODO: login 완성 되면 복구
-                // this.loginErrorSubject.next(error);
-                this.currentUserModel = {
-                  userName: 'admin',
-                  token: 'token'
-                };
-                this.currentUserSubject.next({
-                  userName: 'admin',
-                  token: 'token'
-                });
+                this.loginErrorSubject.next(error);
             }
         );
   }
 
-  async logout() {
+  logout() {
     // remove user from local storage to log user out
     this.removeToken();
     this.currentUserModel = null;
@@ -101,8 +103,8 @@ export class AuthenticationService {
   //     localStorage.setItem(this.REFRESH_TOKEN_NAME, refreshToken);
   // }
 
-  getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_NAME);
+  getToken(): string {
+    return localStorage.getItem(this.TOKEN_NAME) || '';
   }
 
   // getRefreshToken(): string | null {
@@ -119,8 +121,8 @@ export class AuthenticationService {
 
   // 토큰 유효성 검증
   isAuthenticated(): boolean {
-    return true;
-    // const token = this.getToken();
-    // return token ? !this.isTokenExpired(token) : false;
+    // return true;
+    const token = this.getToken();
+    return token ? !this.isTokenExpired(token) : false;
   }
 }

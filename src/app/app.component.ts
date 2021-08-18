@@ -35,9 +35,11 @@ export class AppComponent implements OnInit {
     });
 
     // TODO: token 체크
-    if (!this.authentication.user) {
+    if (!this.authentication.isAuthenticated()) {
       this.isUser = false;
       this.router.navigate(['login-form']);
+    } else {
+      this.isUser = true;
     }
   }
 }

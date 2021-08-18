@@ -26,8 +26,7 @@ const routes: Routes = [
   // },
   {
     path: 'login-form',
-    component: LoginFormComponent,
-    canActivate: [ AuthGuard ]
+    component: LoginFormComponent
   },
   // {
   //   path: 'reset-password',
@@ -72,7 +71,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'codemanager'
+    redirectTo: 'login-form'
   }
 ];
 

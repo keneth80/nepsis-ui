@@ -1,8 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, mergeMap, concatMap, first, shareReplay } from 'rxjs/operators';
+import { throwError } from 'rxjs';
+
 import { GlobalVariableService } from '../../services/app/global-variable.service';
+import { GroupCode, Code } from '../models/group-code';
 import { UserModel } from '../../models/user-model';
+import { groupCodeModelMapper, codeModelMapper } from '../../mappers';
+
+const queryString = (params: any) => Object.keys(params).map(key => key + '=' + params[key]).join('&');
 
 // backend api가 정의되는 service
 @Injectable({
@@ -27,21 +33,8 @@ export class EndpointService {
         // backend model mapping
         map((response: any) => { // Response<AuthModel>
           const token = response.headers.get('Authorization');
-          console.log('request : ', response, token);
-          // TODO: token setting
-          // const data: AuthModel = AuthMapper.authModelMapper(request);
-          // if (data && data.access_token) {
-          //     return data;
-          // } else {
-          //     return throwError('no permission!');
-          // }
-          return {
-            userName: userId,
-            token,
-          } as UserModel
+          return token;
         }),
-        // frontend model mapping
-        // map(AuthMapper.userModelMapper),
         shareReplay()
     );
   }
@@ -49,12 +42,22 @@ export class EndpointService {
   retrieveGroupCodeList(searchKey: string) {
     return this.http.get<any>(
       `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/groupCodeList?cmnGrpCd=${searchKey}`
+    )
+    .pipe(
+      map((response: GroupCode[]) => {
+        return response.map((groupCode: GroupCode) => groupCodeModelMapper(groupCode));
+      })
     );
   }
 
   retrieveCodeListByGroup(groupKey: string) {
     return this.http.get<any>(
       `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/codeList?cmnGrpCd=${groupKey}`
+    )
+    .pipe(
+      map((response: Code[]) => {
+        return response.map((code: Code) => codeModelMapper(code));
+      })
     );
   }
 }
