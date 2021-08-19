@@ -288,7 +288,7 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
     console.log('onFocusedRowChangedHandler : ', event, this.focusedGroupCodeRowKey);
   }
 
-  onGroupCodeChange(event: any) {
+  onChangeGroupCode(event: any) {
     console.log('onGroupCodeChange : ', event, this.groupCodeForm.cmnGrpCd);
   }
 
