@@ -9,8 +9,7 @@ export const groupCodeModelMapper = (groupCode: GroupCode): GroupCodeModel => {
     codeStep: groupCode.fstRegpId,
     codeDescription: groupCode.cdDesc,
     jobCode: groupCode.jobStCd,
-    useYn: groupCode.delYn,
-    isServer: true
+    useYn: groupCode.delYn
   } as GroupCodeModel;
 };
 

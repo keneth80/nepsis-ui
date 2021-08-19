@@ -5,7 +5,6 @@ export interface GroupCodeModel {
   codeDescription: string;
   jobCode: string;
   useYn: string;
-  isServer?: boolean;
 }
 
 export interface CodeModel {
