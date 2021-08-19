@@ -53,6 +53,8 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
   minColWidth: number;
   colCount: number;
   colCountByScreen: any;
+  // 검색 영역의 엔터키 이벤트를 위한 옵션
+  groupCodeSearchInputOptions: any;
 
   // 그룹 코드 그리드에서 포커 변경 시 변경되는 key
   focusedGroupCodeRowKey: any;
@@ -117,6 +119,11 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
     this.groupSearchForm = {
       cmnGrpCd: 'TEST03_GRP_CD'
     };
+    this.groupCodeSearchInputOptions = {
+      onEnterKey: (e: any) => {
+        this.onSearchSubmitHandler(e);
+      }
+    }
 
     this.groupCodeForm = {
       cmnGrpCd: '',

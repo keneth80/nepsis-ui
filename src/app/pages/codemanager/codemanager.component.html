@@ -13,7 +13,8 @@
             [colCountByScreen]="colCountByScreen"
             [showColonAfterLabel]="showColon">
             <dxi-item itemType="group">
-              <dxi-item dataField="cmnGrpCd">
+              <dxi-item dataField="cmnGrpCd" editorType="dxTextBox"
+                [editorOptions]="groupCodeSearchInputOptions">
                 <!-- <dxi-validation-rule 
                   type="required"
                   message="Group Code is required">
