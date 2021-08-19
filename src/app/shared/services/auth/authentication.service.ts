@@ -60,8 +60,7 @@ export class AuthenticationService {
   }
 
   get currentUserValue(): UserModel { // UserModel
-      const decodeObject: UserModel = this.jwtHelper.decodeToken(this.getToken() || '');
-      return decodeObject;
+      return tokenParse(this.getToken());;
   }
 
   get token(): string | null {

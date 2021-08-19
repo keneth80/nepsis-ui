@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
     private router: Router,
     public appInfo: AppInfoService
   ) {
-    console.log('App : ', this.authentication.user);
+    console.log('App : ', this.authentication.currentUserValue);
   }
 
   ngOnInit() {
