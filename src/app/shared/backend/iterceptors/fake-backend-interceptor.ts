@@ -19,8 +19,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
  
         // wrap in delayed observable to simulate server api call
         return of(null).pipe(mergeMap(() => {
-            console.log('request.url : ', request.url);
-            // authenticate
+            // common code test
             if (request.url.indexOf('commonCodeList') > -1 && request.method === 'GET') {
                 // find if any user matches login credentials
               let body = [

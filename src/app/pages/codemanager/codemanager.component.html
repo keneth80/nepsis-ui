@@ -124,6 +124,7 @@
                       displayExpr="label">
                     </dx-select-box> -->
                     <form-select-box
+                      [isGlobalValue]="false"
                       [commonCodeType]="'job'"
                       [codeValue]="groupCodeForm.jobStCd"
                       (onChangeValue)="onChangeJobCode($event)">

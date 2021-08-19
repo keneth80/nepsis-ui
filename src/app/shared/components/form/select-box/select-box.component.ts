@@ -5,6 +5,7 @@ import { DxSelectBoxModule } from 'devextreme-angular';
 import { ListCode } from '../../../models/common-code';
 import { BaseComponent } from '../../base.component';
 import { SelectBoxService } from './select-box.service';
+import { GlobalVariableService } from '../../../services/app/global-variable.service';
 
 @Component({
   selector: 'form-select-box',
@@ -15,6 +16,9 @@ import { SelectBoxService } from './select-box.service';
   ]
 })
 export class SelectBoxComponent extends BaseComponent implements OnInit {
+  @Input()
+  isGlobalValue: boolean = true;
+
   @Input()
   commonCodeType: string = '';
 
@@ -27,17 +31,23 @@ export class SelectBoxComponent extends BaseComponent implements OnInit {
   codeList: ListCode[] = [];
 
   constructor(
+    private globalVariableService: GlobalVariableService,
     private selectboxService: SelectBoxService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.selectboxService.$codeList.subscribe((result: ListCode[]) => {
-      this.codeList = result;
-    });
-
-    this.selectboxService.retrieveCommonCodeList(this.commonCodeType);
+    // 초기에 불러온 공통코드 사용여부
+    if (this.isGlobalValue) {
+      this.codeList = this.globalVariableService.commonCode[this.commonCodeType];
+    } else {
+      this.selectboxService.$codeList.subscribe((result: ListCode[]) => {
+        this.codeList = result;
+      });
+  
+      this.selectboxService.retrieveCommonCodeList(this.commonCodeType);
+    }
   }
 
   onSelectionChanged({ selectedItem }: any) {

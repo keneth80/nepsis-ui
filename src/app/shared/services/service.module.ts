@@ -7,9 +7,16 @@ import { GlobalVariableService } from './app/global-variable.service';
 import { ErrorInterceptor } from '../backend/iterceptors/error-interceptor';
 import { JwtInterceptor } from '../backend/iterceptors/jwt-interceptor';
 import { GlobalErrorHandler } from './error/global-error-handler';
+import { mergeMap } from 'rxjs/operators';
 
-export function retriveConfiguration(globalService: GlobalVariableService) {
-  return () => globalService.retriveConfiguration();
+export function retriveConfiguration(globalService: GlobalVariableService, endpoint: EndpointService) {
+  return () => globalService.retriveConfiguration()
+  .pipe(
+    mergeMap((res: any) => {
+        globalService.remoteUrl = res.remote;
+        return endpoint.retrieveCommonCodeList('job');
+    })
+  ).toPromise();
 }
 
 export function init(appInitService: ApplicationInitializeService) {
@@ -21,7 +28,7 @@ export function init(appInitService: ApplicationInitializeService) {
     EndpointService,
     GlobalVariableService,
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
-    { provide: APP_INITIALIZER, useFactory: retriveConfiguration, deps: [GlobalVariableService], multi: true },
+    { provide: APP_INITIALIZER, useFactory: retriveConfiguration, deps: [GlobalVariableService, EndpointService], multi: true },
     { provide: APP_INITIALIZER, useFactory: init, deps: [ApplicationInitializeService], multi: true }
   ]
 })

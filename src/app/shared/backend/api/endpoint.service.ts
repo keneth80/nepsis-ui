@@ -61,13 +61,14 @@ export class EndpointService {
     );
   }
 
-  retrieveCommonCodeList(type: string) {
+  retrieveCommonCodeList(type: string = '') {
     return this.http.get<any>(
       `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/commonCodeList?type=${type}`
     )
     .pipe(
       map((response: CommonCode[]) => {
-        return response.map((code: CommonCode) => listCodeMapper(code));
+        this.globalVarialbe.commonCode[type] = response.map((code: CommonCode) => listCodeMapper(code));
+        return this.globalVarialbe.commonCode[type];
       })
     );
   }
