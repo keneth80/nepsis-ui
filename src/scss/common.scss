@@ -115,7 +115,7 @@ $breakpoints:("": "0px", "s":"480px", "m":"768px", "l":"980px");
   &.no-margin{margin: 0;}
   &.no-padding{padding: 0;}
   &.second{justify-content: space-between;
-    div:nth-child(1){width:77%;}
+    // div:nth-child(1){width:77%;}
     div:nth-child(2){width:13%;text-align:center;margin:0 auto;
       button{min-width:50px;}
     }

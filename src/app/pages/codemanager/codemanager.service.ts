@@ -24,13 +24,13 @@ export class CodeManagerService {
   }
 
   retrieveGroupCodeList(cmnGrpCd: string) {
-    this.endpoint.retrieveGroupCodeList(cmnGrpCd).subscribe((result: any[]) => {
+    this.endpoint.retrieveGroupCodeList(cmnGrpCd).subscribe((result: GroupCodeModel[]) => {
       this.groupCodeListSubject.next(result);
     });
   }
 
   retrieveCodeListByGroupCode(cmnGrpCd: string) {
-    this.endpoint.retrieveCodeListByGroup(cmnGrpCd).subscribe((result: any[]) => {
+    this.endpoint.retrieveCodeListByGroup(cmnGrpCd).subscribe((result: CodeModel[]) => {
       this.codeListSubject.next(result);
     });
   }

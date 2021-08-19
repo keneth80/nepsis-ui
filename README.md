@@ -12,7 +12,7 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 ## User Component create command
 
-Run `ng generate component common/components/{componentName}`
+Run `ng generate component shared/components/{componentName}`
 
 ## User Page Module create command
 

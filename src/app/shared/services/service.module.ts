@@ -22,9 +22,7 @@ export function init(appInitService: ApplicationInitializeService) {
     GlobalVariableService,
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     { provide: APP_INITIALIZER, useFactory: retriveConfiguration, deps: [GlobalVariableService], multi: true },
-    { provide: APP_INITIALIZER, useFactory: init, deps: [ApplicationInitializeService], multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+    { provide: APP_INITIALIZER, useFactory: init, deps: [ApplicationInitializeService], multi: true }
   ]
 })
 export class ServiceModule { }

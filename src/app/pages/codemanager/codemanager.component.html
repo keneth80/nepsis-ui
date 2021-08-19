@@ -55,9 +55,8 @@
               <dxi-column dataField="codeName" caption="Group Code Name" [width]="190"></dxi-column>
               <dxi-column dataField="codeStep" caption="Code Step" [width]="100"></dxi-column>
               <dxi-column dataField="codeDescription" caption="Description"></dxi-column>
-              <dxi-column dataField="jobCode" caption="Job Code" [width]="100"></dxi-column>
-              <dxi-column dataField="hrkCode" caption="Hrk Code" [width]="120"></dxi-column>
-              <dxi-column dataField="deleteYn" caption="Delete Y/N" [width]="100"></dxi-column>
+              <dxi-column dataField="jobCode" caption="Job Code" [width]="200"></dxi-column>
+              <dxi-column dataField="useYn" caption="Use Y/N" [width]="100"></dxi-column>
             </dx-data-grid>
           </div>
         </div>
@@ -80,7 +79,11 @@
                   <div class="dx-field-value">
                     <div class="form-grid middle second"><!--form-grid middle second-->
                       <div>
-                        <dx-text-box [(value)]="groupCodeForm.cmnGrpCd"></dx-text-box>
+                        <dx-text-box
+                          [disabled]="isGroupCodeDisabled"
+                          [(value)]="groupCodeForm.cmnGrpCd"
+                          (change)="onGroupCodeChange($event)">
+                        </dx-text-box>
                       </div>
                       <div>
                         <button class="btn back-cyan medium"
@@ -114,39 +117,32 @@
                 <div class="dx-field">
                   <div class="dx-field-label">Job Code<span class="dx-field-item-required-mark">&nbsp;*</span></div>
                   <div class="dx-field-value">
-                    <dx-select-box
+                    <!-- <dx-select-box
                       [items]="jobCodeList"
                       [(value)]="groupCodeForm.jobStCd"
                       valueExpr="id"
-                      displayExpr="name">
-                    </dx-select-box>
+                      displayExpr="label">
+                    </dx-select-box> -->
+                    <form-select-box
+                      [commonCodeType]="'job'"
+                      [codeValue]="groupCodeForm.jobStCd"
+                      (onChangeValue)="onChangeJobCode($event)">
+                    </form-select-box>
                   </div>
                 </div>
                 <!--//select box -->
                 <!-- radio -->
                 <div class="dx-field">
-                  <div class="dx-field-label">Delete Y/N<span class="dx-field-item-required-mark">&nbsp;*</span></div>
+                  <div class="dx-field-label">Use Y/N<span class="dx-field-item-required-mark">&nbsp;*</span></div>
                   <div class="dx-field-value">
                     <dx-radio-group
                       [items]="ynList"
-                      [(value)]="groupCodeForm.delYn"
+                      [(value)]="groupCodeForm.useYn"
                       layout="horizontal">
                     </dx-radio-group>
                   </div>
                 </div>
                 <!--//radio -->
-                <!--from thirds grid-->
-                <div class="dx-field">
-                  <div class="dx-field-label">Group Code</div>
-                  <div class="dx-field-value">
-                    <div class="form-grid middle thirds"><!--form-grid middle thirds-->
-                      <!-- <div><dx-text-box class="i-search" value=""></dx-text-box></div>
-                      <div>/</div> -->
-                      <div><dx-text-box [(value)]="groupCodeForm.hrkCd"></dx-text-box></div>
-                    </div><!--form-grid middle thirds-->
-                  </div>
-                </div>
-                <!--//from thirds grid-->
                 <!--dx-field-->
                 <div class="dx-field t-right">
                   <button class="btn back-cyan small" (click)="onNewRegisterHandler($event)">신규등록</button>
@@ -180,12 +176,12 @@
               <dxi-column dataField="code" caption="Code" [width]="55"></dxi-column>
               <dxi-column dataField="codeName" caption="Code Name" [width]="130"></dxi-column>
               <dxi-column dataField="codeDescription" caption="Code Desc"></dxi-column>
-              <dxi-column dataField="delYn" caption="Delete Y/N"
+              <dxi-column dataField="useYn" caption="Use Y/N"
                 [width]="100"
                 [editorOptions]="editorOptions">
                 <dxo-lookup
                   [dataSource]="statuses"
-                  displayExpr="name"
+                  displayExpr="label"
                   valueExpr="id">
                 </dxo-lookup>
               </dxi-column>

@@ -4,8 +4,8 @@ export interface GroupCodeModel {
   codeStep: string;
   codeDescription: string;
   jobCode: string;
-  hrkCode: string;
-  deleteYn: string;
+  useYn: string;
+  isServer?: boolean;
 }
 
 export interface CodeModel {
@@ -15,7 +15,7 @@ export interface CodeModel {
   codeName: string;
   codeDescription: string;
   groupCode: string;
-  delYn: string;
+  useYn: string;
   srtOdr: number;
   createDtm: string;
   fstRegpId?: string;
@@ -23,4 +23,5 @@ export interface CodeModel {
   lstChgpId?: string;
   rmk?: string;
   type?: string;
+  isServer?: boolean;
 }

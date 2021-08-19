@@ -26,5 +26,9 @@ export interface Code {
   rmk: string;
   srtOdr: number;
   type: string;
+}
 
+export interface CommonCode {
+  id: string;
+  label: string;
 }

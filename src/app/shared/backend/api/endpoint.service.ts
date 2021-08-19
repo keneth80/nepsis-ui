@@ -4,9 +4,9 @@ import { map, mergeMap, concatMap, first, shareReplay } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
 import { GlobalVariableService } from '../../services/app/global-variable.service';
-import { GroupCode, Code } from '../models/group-code';
+import { GroupCode, Code, CommonCode } from '../models/group-code';
 import { UserModel } from '../../models/user-model';
-import { groupCodeModelMapper, codeModelMapper } from '../../mappers';
+import { groupCodeModelMapper, codeModelMapper, listCodeMapper } from '../../mappers';
 
 const queryString = (params: any) => Object.keys(params).map(key => key + '=' + params[key]).join('&');
 
@@ -57,6 +57,17 @@ export class EndpointService {
     .pipe(
       map((response: Code[]) => {
         return response.map((code: Code) => codeModelMapper(code));
+      })
+    );
+  }
+
+  retrieveCommonCodeList(type: string) {
+    return this.http.get<any>(
+      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/commonCodeList?type=${type}`
+    )
+    .pipe(
+      map((response: CommonCode[]) => {
+        return response.map((code: CommonCode) => listCodeMapper(code));
       })
     );
   }

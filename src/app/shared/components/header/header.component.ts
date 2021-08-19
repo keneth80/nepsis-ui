@@ -26,7 +26,7 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   @Input()
   title!: string;
 
-  user: UserModel | null;
+  user: UserModel;
 
   // userMenuItems = [
   //   {

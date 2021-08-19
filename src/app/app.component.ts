@@ -28,13 +28,11 @@ export class AppComponent implements OnInit {
     this.authentication.loginUser$.subscribe((user: UserModel) => {
       if (user) {
         this.isUser = true;
-        // this.router.navigate(['codemanager']);
       } else {
         this.isUser = false;
       }
     });
 
-    // TODO: token 체크
     if (!this.authentication.isAuthenticated()) {
       this.isUser = false;
       this.router.navigate(['login-form']);

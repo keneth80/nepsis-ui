@@ -1,5 +1,6 @@
-import { GroupCode, Code } from '../backend/models/group-code';
+import { GroupCode, Code, CommonCode } from '../backend/models/group-code';
 import { GroupCodeModel, CodeModel } from '../models/group-code-model';
+import { ListCode } from '../models/common-code';
 
 export const groupCodeModelMapper = (groupCode: GroupCode): GroupCodeModel => {
   return {
@@ -8,8 +9,8 @@ export const groupCodeModelMapper = (groupCode: GroupCode): GroupCodeModel => {
     codeStep: groupCode.fstRegpId,
     codeDescription: groupCode.cdDesc,
     jobCode: groupCode.jobStCd,
-    hrkCode: groupCode.lstChgpId,
-    deleteYn: groupCode.delYn
+    useYn: groupCode.delYn,
+    isServer: true
   } as GroupCodeModel;
 };
 
@@ -19,8 +20,16 @@ export const codeModelMapper = (code: Code): CodeModel => {
     codeName: code.cmnCdNm,
     codeDescription: '',
     groupCode: code.cmnGrpCd,
-    delYn: code.delYn,
+    useYn: code.delYn,
     srtOdr: code.srtOdr,
-    createDtm: code.fstRegDtm
+    createDtm: code.fstRegDtm,
+    isServer: true
   } as CodeModel;
 };
+
+export const listCodeMapper = (code: CommonCode) => {
+  return {
+    id: code.id,
+    label: code.label
+  } as ListCode;
+}

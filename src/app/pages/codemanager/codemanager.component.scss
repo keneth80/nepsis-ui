@@ -12,12 +12,12 @@
 }
 
 .data-grid-height {
-  min-height: 220px;
+  min-height: 260px;
   max-height: 900px;
 }
 
 .code-data-grid-height {
-  height: 415px;
+  height: 370px;
 }
 
 .center-container {
@@ -30,6 +30,10 @@
 .bottom-button-container {
   display: block;
   margin-top: 10px;
+}
+
+.dx-texteditor-input {
+  width: none !important;
 }
 
 

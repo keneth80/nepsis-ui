@@ -9,6 +9,7 @@ import { alert } from 'devextreme/ui/dialog';
 import notify from 'devextreme/ui/notify';
 import { BaseComponent } from '../../shared/components/base.component';
 import { GroupCodeModel, CodeModel } from '../../shared/models/group-code-model';
+import { ListCode } from '../../shared/models/common-code';
 
 type GroupSearchForm = {
   cmnGrpCd: string;
@@ -31,8 +32,7 @@ type GroupCodeForm = {
   cmnCdStep: string;
   cdDesc: string;
   jobStCd: string;
-  hrkCd: string;
-  delYn: string;
+  useYn: string;
   type: string;
   codeList: CodeForm[];
 }
@@ -64,6 +64,8 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
 
   // 그룹코드 에디팅 form
   groupCodeForm: GroupCodeForm;
+  // 그룹코드 disabled 처리위한 변수
+  isGroupCodeDisabled = true;
   // 그룹코드 검증 여부를 알기 위함 (검증은 처음 등록 할때만 가능하다.)
   groupCodeFormIsInsert = false;
   // 그룹코드 등록 영역의 job combobox
@@ -83,10 +85,10 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
   // delete yn
   statuses: any[] = [
     {
-      id: 'Y', name: 'Y'
+      id: 'Y', label: 'Y'
     },
     {
-      id: 'N', name: 'N'
+      id: 'N', label: 'N'
     }
   ];
 
@@ -95,6 +97,9 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
   emailButtonOptions: any;
   closeButtonOptions: any;
   positionOf: string;
+
+  // test job code
+  jobCd = 'J0001';
 
   constructor(
     private codeManagerService: CodeManagerService
@@ -119,8 +124,7 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
       cmnCdStep: '1',
       cdDesc: '',
       jobStCd: '',
-      hrkCd: '',
-      delYn: 'Y',
+      useYn: 'Y',
       type: 'insert',
       codeList: []
     };
@@ -269,29 +273,38 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
     }
     this.currentGroupCode = event.row.data;
 
+    this.isGroupCodeDisabled = true;
+
     this.groupCodeForm = {
       cmnGrpCd: this.currentGroupCode.code,
       cmnGrpCdNm: this.currentGroupCode.codeName,
       cmnCdStep: this.currentGroupCode.codeStep,
       cdDesc: this.currentGroupCode.codeDescription,
       jobStCd: this.currentGroupCode.jobCode,
-      hrkCd: this.currentGroupCode.hrkCode,
-      delYn: this.currentGroupCode.deleteYn,
+      useYn: this.currentGroupCode.useYn,
       type: 'update',
       codeList: []
     };
     console.log('onFocusedRowChangedHandler : ', event, this.focusedGroupCodeRowKey);
   }
 
+  onGroupCodeChange(event: any) {
+    console.log('onGroupCodeChange : ', event, this.groupCodeForm.cmnGrpCd);
+  }
+
+  onChangeJobCode(event: ListCode) {
+    this.jobCd = event.id;
+  }
+
   onNewRegisterHandler(event: Event) {
+    this.isGroupCodeDisabled = false;
     this.groupCodeForm = {
       cmnGrpCd: '',
       cmnGrpCdNm: '',
       cmnCdStep: '1',
       cdDesc: '',
       jobStCd: '',
-      hrkCd: '',
-      delYn: 'Y',
+      useYn: 'Y',
       type: 'insert',
       codeList: []
     };
@@ -300,7 +313,7 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
       key: 'cmnCd',
       data: []
     });
-    console.log('onRegisterHandler : ');
+    console.log('onRegisterHandler');
   }
 
   onSubmitByGroupCodeHandler(event: Event) {
@@ -311,6 +324,7 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
       }
     });
     console.log('onSubmitHandler : ', this.groupCodeForm);
+    console.log('this.jobCd : ', this.jobCd);
   }
 
   onDeleteByGroupCodeHandler(event: Event) {
@@ -327,7 +341,12 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
     this.positionOf = `#compareButton`;
   }
 
+  // test
+  private isValidation = true;
+
   onVerificationHandler(event: Event) {
+    this.isValidation = !this.isValidation;
+    this.jobCd = 'J000' + ( this.isValidation ? '1' : '2');
     // this.popupVisible = true;
   }
 }
