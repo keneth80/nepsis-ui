@@ -59,8 +59,8 @@ export class AuthenticationService {
     return this.loginErrorSubject.asObservable();
   }
 
-  get currentUserValue(): UserModel { // UserModel
-      return tokenParse(this.getToken());;
+  get currentUserValue(): UserModel | null { // UserModel
+      return this.getToken()? tokenParse(this.getToken()) : null;
   }
 
   get token(): string | null {
