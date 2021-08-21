@@ -116,6 +116,7 @@ export class CodeManagerService {
   }
 
   isChangeValue(groupCode: GroupCodeModel, groupForm: GroupCodeParam) {
+    console.log('isChangeValue : ', groupCode, groupForm);
     let result = false;
     if (
       groupCode.code !== groupForm.cmnGrpCd ||

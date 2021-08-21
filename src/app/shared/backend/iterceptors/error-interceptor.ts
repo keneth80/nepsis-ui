@@ -5,6 +5,7 @@ import { catchError } from 'rxjs/operators';
 
 import { AuthenticationService } from '../../services/auth/authentication.service';
 import { Router } from '@angular/router';
+import notify from 'devextreme/ui/notify';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
@@ -34,7 +35,14 @@ export class ErrorInterceptor implements HttpInterceptor {
               } else {
                 error.message = 'not authorization, please login!';
                 // auto logout if 401 response returned from api
-                // this.authenticationService.logout();
+                notify({
+                  message: '로그인해주세요.',
+                  position: {
+                      my: 'center top',
+                      at: 'center top'
+                  }
+                }, 'error', 2000);
+                this.authenticationService.logout();
               }
           }
 

@@ -13,6 +13,7 @@ import { ListCode } from '../../shared/models/common-code';
 import { GlobalVariableService } from '../../shared/services/app/global-variable.service';
 import { JOB_ST_CD } from '../../shared/const';
 import { GroupCodeParam, CodeParam } from '../../shared/backend/params/group-code-param';
+import { delayExcute } from '../../shared/utils';
 
 type GroupSearchForm = {
   cmnGrpCd: string;
@@ -111,6 +112,8 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
   private originCodeList: CodeModel[] = [];
 
   private deleteCodeList: CodeModel[] = [];
+
+  private isBack = false;
 
   constructor(
     private globalVariableService: GlobalVariableService,
@@ -308,24 +311,36 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
   }
 
   onFocusedRowChangedHandler(event: any) {
-    if (this.currentGroupCode) {
-      // TODO: 오리지널 데이터와 수정되고 있는 데이터를 따로 저장하고 값을 체크한다.
-      if (this.codeManagerService.isChangeValue(this.currentGroupCode, this.groupCodeForm)) {
-        console.log('change : ', this.currentGroupCode, this.groupCodeForm);
-        const result: any = confirm('수정중인 데이터가 있습니다. 계속진행할까요?', 'Confirm');
-        result.done((dialogResult: any) => {
-          if (dialogResult) {
-            setTimeout(() => {
+    delayExcute(100, () => {
+      if (!this.isBack && this.currentGroupCode) {
+        // TODO: 하위 코드 리스트를 체크 추가
+        if (this.codeManagerService.isChangeValue(this.currentGroupCode, this.groupCodeForm)) {
+          console.log('change : ', this.currentGroupCode, this.groupCodeForm);
+          const result: any = confirm('수정중인 데이터가 있습니다. 작업을 취소하시겠습니까?', 'Confirm');
+          result.done((dialogResult: any) => {
+            if (!dialogResult) {
+              this.isBack = true;
               this.focusedGroupCodeRowKey = this.groupCodeForm.cmnGrpCd;
-            }, 300);
-          } else {
-            this.setFormSetting(event);
-            console.log('onFocusedRowChangedHandler : ', event, this.focusedGroupCodeRowKey);
-          }
-        });
+            } else {
+              this.isBack = false;
+              this.setFormSetting(event);
+              console.log('onFocusedRowChangedHandler3 : ', event, this.focusedGroupCodeRowKey);
+            }
+          });
+        } else {
+          this.isBack = false;
+          this.setFormSetting(event);
+          console.log('onFocusedRowChangedHandler2 : ', event, this.focusedGroupCodeRowKey);
+        }
+      } else {
+        if (!this.isBack) {
+          this.setFormSetting(event);
+          console.log('onFocusedRowChangedHandler1 : ', event, this.focusedGroupCodeRowKey);
+        }
+        this.isBack = false;
+        
       }
-    }
-    this.setFormSetting(event);
+    });
   }
 
   onChangeGroupCode(event: any) {
@@ -407,6 +422,8 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
         }
       }
     });
+
+    console.log('onSubmitByGroupCodeHandler : ', this.groupCodeForm);
   }
 
   onDeleteByGroupCodeHandler(event: Event) {
@@ -432,7 +449,6 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
     this.deleteCodeList.length = 0;
     const targetData: GroupCodeModel = event.row.data;
 
-    this.currentGroupCode = {...event.row.data};
     this.isGroupCodeDisabled = true;
 
     this.groupCodeForm = {
@@ -445,7 +461,8 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
       codeList: []
     };
 
-    this.codeManagerService.retrieveCodeListByGroupCode(targetData.code);
+    this.currentGroupCode = {...event.row.data};
+    this.codeManagerService.retrieveCodeListByGroupCode(event.row.data.code);
 
     console.log('targetData : ', targetData);
   }
