@@ -40,7 +40,7 @@ export class LoginFormComponent extends BaseComponent implements OnInit {
       .subscribe((user: UserModel) => {
         this.loading = false;
         if (user) {
-          this.router.navigate([this.returnUrl]);
+          this.router.navigate(['/codemanager']);
         }
       });
 

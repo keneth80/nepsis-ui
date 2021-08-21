@@ -4,9 +4,11 @@ import { DxFormComponent } from 'devextreme-angular';
 import ArrayStore from 'devextreme/data/array_store';
 import { sha1 } from 'object-hash';
 import { confirm } from 'devextreme/ui/dialog';
-import { CodeManagerService } from './codemanager.service';
 import { alert } from 'devextreme/ui/dialog';
 import notify from 'devextreme/ui/notify';
+import DataGrid from "devextreme/ui/data_grid";
+
+import { CodeManagerService } from './codemanager.service';
 import { BaseComponent } from '../../shared/components/base.component';
 import { GroupCodeModel, CodeModel } from '../../shared/models/group-code-model';
 import { ListCode } from '../../shared/models/common-code';
@@ -49,7 +51,6 @@ type GroupCodeForm = {
 })
 
 export class CodeManagerComponent extends BaseComponent implements OnInit, AfterViewInit {
-  @ViewChild('codeGrid') dataGrid: any;
   // 검색 영역 form
   groupSearchForm: GroupSearchForm;
   // 검색 input 설정 정보
@@ -108,6 +109,8 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
   jobCd = 'J0001';
 
   private isValid = false;
+
+  private codeListGridInstance: DataGrid;
 
   private originCodeList: CodeModel[] = [];
 
@@ -203,7 +206,6 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
         data: codeList
       });
       this.originCodeList = [...codeList];
-      console.log('codeList : ', this.codeList);
     });
 
     this.subscription = this.codeManagerService.$validateGroupCode.subscribe((validate: boolean) => {
@@ -243,7 +245,6 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
   }
 
   onRowRemoved(event: any) {
-    console.log('onRowRemoved : ', event);
     this.deleteCodeList.push({
       cmnCd: event.data.cmnCd,
       cmnCdNm: event.data.cmnCdNm,
@@ -254,41 +255,45 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
     });
   }
 
+  saveGridInstance (e: any) {
+    this.codeListGridInstance = e.component;
+  }
+
   deleteRecords() {
-    // this.selectedItemKeys.forEach((key) => {
-    //     this.dataSource.remove(key);
-    // });
-    // this.dataGrid.instance.refresh();
+    const result: any = confirm('삭제하시겠습니까?', '확인');
+    result.done((dialogResult: any) => {
+      if (dialogResult) {
+        this.selectedItemKeys.forEach((key) => {
+            this.codeList.remove(key);
+        });
+        for (const codeModel of this.originCodeList) {
+          if (this.selectedItemKeys.includes(codeModel.cmnCd)) {
+            this.deleteCodeList.push({
+              ...codeModel,
+              type: 'delete'
+            });
+          }
+        }
+        this.codeListGridInstance.refresh();
+      }
+    });
   }
 
   onToolbarPreparing(e: any) {
     e.toolbarOptions.items[0].showText = 'always';
 
-    // e.toolbarOptions.items.push({
-    //   location: 'after',
-    //   template: 'deleteButton',
-    //   onClick: (e: any) => {
-    //     for (const key of this.selectedItemKeys) {
-    //       this.codeList.remove(key);
-    //     };
-    //     console.log('dataGrid : ', this.dataGrid);
-    //     console.log('deleteButton : ', this.selectedItemKeys, e);
-    //   }
-    // });
+    e.toolbarOptions.items.push({
+      location: 'after',
+      template: 'deleteButton',
+    });
   }
 
   onSearchSubmitHandler(event: Event) {
-    // if (this.groupSearchForm.cmnGrpCd.trim() === '') {
-    //   alert('Please enter the group code.', 'Warning');
-    //   return;
-    // }
     this.codeManagerService.retrieveGroupCodeList(this.groupSearchForm.cmnGrpCd.trim());
-    console.log('onSubmitHandler : ', this.groupSearchForm);
   }
 
   onInputResetHandler(event: Event) {
     this.groupSearchForm.cmnGrpCd = '';
-    console.log('onInputResetHandler : ');
   }
 
   onFocusedRowChangingHandler(e: any) {
@@ -374,16 +379,24 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
   }
 
   onSubmitByGroupCodeHandler(event: Event) {
-    // const result: any = confirm('Would you like to register?', 'Confirm');
-    const resultCodeList: CodeParam[] = (this.codeList as any)._array.map((code: CodeModel) => {
+    const resultCodeList: CodeParam[] = this.codeListGridInstance.getDataSource().items().map((code: CodeModel) => {
       code.cmnGrpCd = this.groupCodeForm.cmnGrpCd;
       if (this.groupCodeForm.type === 'insert') {
         code.type = this.groupCodeForm.type;
       } else {
         code.type = code.isServer ? 'update' : 'insert';
       }
-      return code;
+      return code as CodeParam;
     });
+    // const resultCodeList: CodeParam[] = (this.codeList as any)._array.map((code: CodeModel) => {
+    //   code.cmnGrpCd = this.groupCodeForm.cmnGrpCd;
+    //   if (this.groupCodeForm.type === 'insert') {
+    //     code.type = this.groupCodeForm.type;
+    //   } else {
+    //     code.type = code.isServer ? 'update' : 'insert';
+    //   }
+    //   return code;
+    // });
 
     for (const delItem of this.deleteCodeList) {
       resultCodeList.push(delItem as CodeParam);
@@ -414,7 +427,6 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
         } else {
           // insert
           if (!this.isValid) {
-            // alert('검증을 실행해주세요.', 'Warning');
             alert('검증을 실행해주세요.', '경고');
             return;
           }
@@ -423,7 +435,7 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
       }
     });
 
-    console.log('onSubmitByGroupCodeHandler : ', this.groupCodeForm);
+    console.log('onSubmitByGroupCodeHandler : ', this.groupCodeForm, this.codeListGridInstance.getDataSource().items());
   }
 
   onDeleteByGroupCodeHandler(event: Event) {
@@ -463,7 +475,5 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
 
     this.currentGroupCode = {...event.row.data};
     this.codeManagerService.retrieveCodeListByGroupCode(event.row.data.code);
-
-    console.log('targetData : ', targetData);
   }
 }
