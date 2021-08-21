@@ -10,13 +10,13 @@ import { GlobalErrorHandler } from './error/global-error-handler';
 import { mergeMap } from 'rxjs/operators';
 
 export function retriveConfiguration(globalService: GlobalVariableService, endpoint: EndpointService) {
-  return () => globalService.retriveConfiguration()
-  .pipe(
-    mergeMap((res: any) => {
-        globalService.remoteUrl = res.remote;
-        return endpoint.retrieveCommonCodeList('job');
-    })
-  ).toPromise();
+  return () => globalService.retriveConfiguration();
+  // .pipe(
+  //   mergeMap((res: any) => {
+  //       globalService.remoteUrl = res.remote;
+  //       return endpoint.retrieveCommonCodeList('JOB_ST_CD');
+  //   })
+  // ).toPromise();
 }
 
 export function init(appInitService: ApplicationInitializeService) {

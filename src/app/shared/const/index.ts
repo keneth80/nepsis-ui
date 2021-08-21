@@ -1,0 +1,1 @@
+export const JOB_ST_CD = 'JOB_ST_CD';

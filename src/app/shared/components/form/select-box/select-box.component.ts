@@ -17,6 +17,9 @@ import { GlobalVariableService } from '../../../services/app/global-variable.ser
 })
 export class SelectBoxComponent extends BaseComponent implements OnInit {
   @Input()
+  items: ListCode[] = [];
+
+  @Input()
   isGlobalValue: boolean = true;
 
   @Input()
@@ -39,15 +42,15 @@ export class SelectBoxComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     // 초기에 불러온 공통코드 사용여부
-    if (this.isGlobalValue) {
-      this.codeList = this.globalVariableService.commonCode[this.commonCodeType];
-    } else {
-      this.selectboxService.$codeList.subscribe((result: ListCode[]) => {
-        this.codeList = result;
-      });
+    // if (this.isGlobalValue) {
+    //   this.codeList = this.globalVariableService.commonCode[this.commonCodeType];
+    // } else {
+    //   this.selectboxService.$codeList.subscribe((result: ListCode[]) => {
+    //     this.codeList = result;
+    //   });
   
-      this.selectboxService.retrieveCommonCodeList(this.commonCodeType);
-    }
+    //   this.selectboxService.retrieveCommonCodeList(this.commonCodeType);
+    // }
   }
 
   onSelectionChanged({ selectedItem }: any) {

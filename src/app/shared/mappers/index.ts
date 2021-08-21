@@ -9,19 +9,17 @@ export const groupCodeModelMapper = (groupCode: GroupCode): GroupCodeModel => {
     codeStep: groupCode.fstRegpId,
     codeDescription: groupCode.cdDesc,
     jobCode: groupCode.jobStCd,
-    useYn: groupCode.delYn
+    useYn: groupCode.useYn
   } as GroupCodeModel;
 };
 
 export const codeModelMapper = (code: Code): CodeModel => {
   return {
-    code: code.cmnCd,
-    codeName: code.cmnCdNm,
-    codeDescription: '',
-    groupCode: code.cmnGrpCd,
-    useYn: code.delYn,
+    cmnCd: code.cmnCd,
+    cmnCdNm: code.cmnCdNm,
+    cmnGrpCd: code.cmnCdNm,
+    useYn: code.useYn,
     srtOdr: code.srtOdr,
-    createDtm: code.fstRegDtm,
     isServer: true
   } as CodeModel;
 };

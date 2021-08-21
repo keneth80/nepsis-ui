@@ -8,15 +8,13 @@ export interface GroupCodeModel {
 }
 
 export interface CodeModel {
-  aplEndDt?: string;
-  aplStrDt?: string;
-  code: string;
-  codeName: string;
-  codeDescription: string;
-  groupCode: string;
+  cmnCd: string;
+  cmnCdNm: string;
+  cmnGrpCd: string;
   useYn: string;
   srtOdr: number;
-  createDtm: string;
+  codeDescription?: string;
+  createDtm?: string;
   fstRegpId?: string;
   lstChgDtm?: string;
   lstChgpId?: string;

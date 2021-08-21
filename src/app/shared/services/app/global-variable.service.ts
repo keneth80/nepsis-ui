@@ -16,7 +16,15 @@ export class GlobalVariableService {
       private http: HttpClient
   ) { }
 
-  retriveConfiguration() {
-      return this.http.get('assets/config/config.json');
+  retriveConfiguration(): Promise<any> {
+      return this.http.get('assets/config/config.json')
+          .toPromise()
+          .then((res: any) => {
+              if (console && console.log) {
+                  console.log('retriveConfiguration : ', res);
+              }
+              this.remoteUrl = res.remote;
+              return res;
+          });
   }
 }

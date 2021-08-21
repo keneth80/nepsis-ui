@@ -10,6 +10,9 @@ import notify from 'devextreme/ui/notify';
 import { BaseComponent } from '../../shared/components/base.component';
 import { GroupCodeModel, CodeModel } from '../../shared/models/group-code-model';
 import { ListCode } from '../../shared/models/common-code';
+import { GlobalVariableService } from '../../shared/services/app/global-variable.service';
+import { JOB_ST_CD } from '../../shared/const';
+import { GroupCodeParam, CodeParam } from '../../shared/backend/params/group-code-param';
 
 type GroupSearchForm = {
   cmnGrpCd: string;
@@ -34,7 +37,6 @@ type GroupCodeForm = {
   jobStCd: string;
   useYn: string;
   type: string;
-  codeList: CodeForm[];
 }
 
 @Component({
@@ -46,6 +48,7 @@ type GroupCodeForm = {
 })
 
 export class CodeManagerComponent extends BaseComponent implements OnInit, AfterViewInit {
+  @ViewChild('codeGrid') dataGrid: any;
   // 검색 영역 form
   groupSearchForm: GroupSearchForm;
   // 검색 input 설정 정보
@@ -65,13 +68,13 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
   currentGroupCode: GroupCodeModel;
 
   // 그룹코드 에디팅 form
-  groupCodeForm: GroupCodeForm;
+  groupCodeForm: GroupCodeParam;
   // 그룹코드 disabled 처리위한 변수
   isGroupCodeDisabled = true;
   // 그룹코드 검증 여부를 알기 위함 (검증은 처음 등록 할때만 가능하다.)
   groupCodeFormIsInsert = false;
   // 그룹코드 등록 영역의 job combobox
-  jobCodeList: any = [];
+  jobCodeList: ListCode[] = [];
   // 그룹코드 등록 영역의 delete yn
   ynList = [
     'Y',
@@ -103,7 +106,14 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
   // test job code
   jobCd = 'J0001';
 
+  private isValid = false;
+
+  private originCodeList: CodeModel[] = [];
+
+  private deleteCodeList: CodeModel[] = [];
+
   constructor(
+    private globalVariableService: GlobalVariableService,
     private codeManagerService: CodeManagerService
   ) {
     super();
@@ -128,7 +138,6 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
     this.groupCodeForm = {
       cmnGrpCd: '',
       cmnGrpCdNm: '',
-      cmnCdStep: '1',
       cdDesc: '',
       jobStCd: '',
       useYn: 'Y',
@@ -137,7 +146,7 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
     };
 
     this.codeList = new ArrayStore({
-      key: 'code',
+      key: 'cmnCd',
       data: []
     });
 
@@ -171,6 +180,13 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
   }
 
   ngOnInit() {
+    this.subscription = this.codeManagerService.$jobCodeList.subscribe((jobCodeList: ListCode[]) => {
+      this.globalVariableService.commonCode[JOB_ST_CD] = jobCodeList;
+      this.jobCodeList = this.globalVariableService.commonCode[JOB_ST_CD];
+
+      this.codeManagerService.retrieveGroupCodeList(this.groupSearchForm.cmnGrpCd.trim());
+    });
+
     this.subscription = this.codeManagerService.$groupCodeList.subscribe((groupCodeList: GroupCodeModel[]) => {
       this.groupCodeList = groupCodeList;
       if (groupCodeList.length) {
@@ -180,13 +196,39 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
 
     this.subscription = this.codeManagerService.$codeListByGroupCode.subscribe((codeList: CodeModel[]) => {
       this.codeList = new ArrayStore({
-        key: 'code',
+        key: 'cmnCd',
         data: codeList
       });
+      this.originCodeList = [...codeList];
       console.log('codeList : ', this.codeList);
     });
 
-    this.codeManagerService.retrieveGroupCodeList(this.groupSearchForm.cmnGrpCd.trim());
+    this.subscription = this.codeManagerService.$validateGroupCode.subscribe((validate: boolean) => {
+      this.isValid = validate;
+      alert(this.isValid ? '검증이 완료되었습니다.' : '다른 코드를 입력해주세요.', '확인');
+    });
+
+    this.subscription = this.codeManagerService.$success.subscribe((type: string) => {
+      const message = type === 'insert' ? '등록되었습니다' :
+        type === 'update' ? '수정되었습니다' : '삭제되었습니다';
+
+      notify({
+        message: message,
+        position: {
+            my: 'center top',
+            at: 'center top'
+        }
+      }, 'success', 2000);
+
+      if (type === 'insert' || type === 'update') {
+        this.groupSearchForm.cmnGrpCd = this.groupCodeForm.cmnGrpCd;
+      } else {
+        this.groupSearchForm.cmnGrpCd = '';
+      }
+      this.codeManagerService.retrieveGroupCodeList(this.groupSearchForm.cmnGrpCd.trim());
+    })
+
+    this.codeManagerService.retrieveJobCodeList(JOB_ST_CD);
   }
 
   ngAfterViewInit() {
@@ -195,6 +237,18 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
 
   selectionChanged(data: any) {
     this.selectedItemKeys = data.selectedRowKeys;
+  }
+
+  onRowRemoved(event: any) {
+    console.log('onRowRemoved : ', event);
+    this.deleteCodeList.push({
+      cmnCd: event.data.cmnCd,
+      cmnCdNm: event.data.cmnCdNm,
+      cmnGrpCd: event.data.cmnGrpCd,
+      srtOdr: event.data.srtOdr,
+      useYn: event.data.useYn,
+      type: 'delete'
+    });
   }
 
   deleteRecords() {
@@ -207,10 +261,17 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
   onToolbarPreparing(e: any) {
     e.toolbarOptions.items[0].showText = 'always';
 
-    e.toolbarOptions.items.push({
-        location: 'after',
-        template: 'deleteButton'
-    });
+    // e.toolbarOptions.items.push({
+    //   location: 'after',
+    //   template: 'deleteButton',
+    //   onClick: (e: any) => {
+    //     for (const key of this.selectedItemKeys) {
+    //       this.codeList.remove(key);
+    //     };
+    //     console.log('dataGrid : ', this.dataGrid);
+    //     console.log('deleteButton : ', this.selectedItemKeys, e);
+    //   }
+    // });
   }
 
   onSearchSubmitHandler(event: Event) {
@@ -218,6 +279,7 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
     //   alert('Please enter the group code.', 'Warning');
     //   return;
     // }
+    this.codeManagerService.retrieveGroupCodeList(this.groupSearchForm.cmnGrpCd.trim());
     console.log('onSubmitHandler : ', this.groupSearchForm);
   }
 
@@ -243,56 +305,27 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
             });
         }
     }
-
-    // if(e.prevRowIndex !== e.newRowIndex) {
-    //   if (sha1(this.groupCodeForm) !== sha1(this.groupCodeList[e.prevRowIndex])) {
-    //     const result: any = confirm('Are you sure?', 'Confirm changes');
-    //     result.done((dialogResult: any) => {
-    //       const currentCode = 'test01';
-    //       console.log('currentCode : ', currentCode);
-    //       setTimeout(() => {
-    //         this.focusedGroupCodeRowKey = currentCode;
-    //         e.component.pageIndex(pageIndex - 1).done(() => {
-    //             e.component.option('focusedRowIndex', dialogResult ? e.newRowIndex : e.prevRowIndex);
-    //         });
-    //       }, 300);
-    //     });
-    //   }
-    // }
-
-    console.log('onFocusedRowChangingHandler : ', key, e.prevRowIndex, e.newRowIndex);
   }
 
   onFocusedRowChangedHandler(event: any) {
     if (this.currentGroupCode) {
-      // if (sha1(this.currentGroupCode) !== sha1(this.groupCodeForm)) {
-      //   console.log('change : ', this.currentGroupCode, this.groupCodeForm);
-      //   const result: any = confirm('Are you sure?', 'Confirm');
-      //   result.done((dialogResult: any) => {
-      //     const currentCode = 'test01';
-      //     console.log('currentCode : ', currentCode);
-      //     setTimeout(() => {
-      //       this.focusedGroupCodeRowKey = currentCode;
-      //     }, 300);
-      //     // alert(dialogResult ? 'Confirmed' : 'Canceled');
-      //   });
-      // }
+      // TODO: 오리지널 데이터와 수정되고 있는 데이터를 따로 저장하고 값을 체크한다.
+      if (this.codeManagerService.isChangeValue(this.currentGroupCode, this.groupCodeForm)) {
+        console.log('change : ', this.currentGroupCode, this.groupCodeForm);
+        const result: any = confirm('수정중인 데이터가 있습니다. 계속진행할까요?', 'Confirm');
+        result.done((dialogResult: any) => {
+          if (dialogResult) {
+            setTimeout(() => {
+              this.focusedGroupCodeRowKey = this.groupCodeForm.cmnGrpCd;
+            }, 300);
+          } else {
+            this.setFormSetting(event);
+            console.log('onFocusedRowChangedHandler : ', event, this.focusedGroupCodeRowKey);
+          }
+        });
+      }
     }
-    this.currentGroupCode = event.row.data;
-
-    this.isGroupCodeDisabled = true;
-
-    this.groupCodeForm = {
-      cmnGrpCd: this.currentGroupCode.code,
-      cmnGrpCdNm: this.currentGroupCode.codeName,
-      cmnCdStep: this.currentGroupCode.codeStep,
-      cdDesc: this.currentGroupCode.codeDescription,
-      jobStCd: this.currentGroupCode.jobCode,
-      useYn: this.currentGroupCode.useYn,
-      type: 'update',
-      codeList: []
-    };
-    console.log('onFocusedRowChangedHandler : ', event, this.focusedGroupCodeRowKey);
+    this.setFormSetting(event);
   }
 
   onChangeGroupCode(event: any) {
@@ -301,14 +334,15 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
 
   onChangeJobCode(event: ListCode) {
     this.jobCd = event.id;
+    this.groupCodeForm.jobStCd = this.jobCd;
   }
 
   onNewRegisterHandler(event: Event) {
+    this.isValid = false;
     this.isGroupCodeDisabled = false;
     this.groupCodeForm = {
       cmnGrpCd: '',
       cmnGrpCdNm: '',
-      cmnCdStep: '1',
       cdDesc: '',
       jobStCd: '',
       useYn: 'Y',
@@ -320,25 +354,67 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
       key: 'cmnCd',
       data: []
     });
-    console.log('onRegisterHandler');
+
+    this.deleteCodeList.length = 0;
   }
 
   onSubmitByGroupCodeHandler(event: Event) {
-    const result: any = confirm('Would you like to register?', 'Confirm');
+    // const result: any = confirm('Would you like to register?', 'Confirm');
+    const resultCodeList: CodeParam[] = (this.codeList as any)._array.map((code: CodeModel) => {
+      code.cmnGrpCd = this.groupCodeForm.cmnGrpCd;
+      if (this.groupCodeForm.type === 'insert') {
+        code.type = this.groupCodeForm.type;
+      } else {
+        code.type = code.isServer ? 'update' : 'insert';
+      }
+      return code;
+    });
+
+    for (const delItem of this.deleteCodeList) {
+      resultCodeList.push(delItem as CodeParam);
+    }
+
+    const param: GroupCodeParam = {
+      cmnGrpCd: this.groupCodeForm.cmnGrpCd,
+      cmnGrpCdNm: this.groupCodeForm.cmnGrpCdNm,
+      jobStCd: this.groupCodeForm.jobStCd,
+      cdDesc: this.groupCodeForm.cdDesc,
+      useYn : this.groupCodeForm.useYn,
+      type: this.groupCodeForm.type,
+      codeList: resultCodeList
+    };
+
+    const formCheckMessage = this.codeManagerService.validationGroupParam(param)
+    if (formCheckMessage !== '') {
+      alert(formCheckMessage, '경고');
+      return;
+    }
+
+    const result: any = confirm(!this.isGroupCodeDisabled ? '등록하시겠습니까?' : '수정하시겠습니까?', '확인');
     result.done((dialogResult: any) => {
       if (dialogResult) {
-
+        // update
+        if (this.isGroupCodeDisabled) {
+          this.codeManagerService.updateGroupCode(param);
+        } else {
+          // insert
+          if (!this.isValid) {
+            // alert('검증을 실행해주세요.', 'Warning');
+            alert('검증을 실행해주세요.', '경고');
+            return;
+          }
+          this.codeManagerService.insertGroupCode(param);
+        }
       }
     });
-    console.log('onSubmitHandler : ', this.groupCodeForm);
-    console.log('this.jobCd : ', this.jobCd);
   }
 
   onDeleteByGroupCodeHandler(event: Event) {
-    const result: any = confirm('Would you like to Delete?', 'Confirm');
+    // const result: any = confirm('Would you like to Delete?', 'Confirm');
+    const result: any = confirm('삭제하시겠습니까?', '확인');
     result.done((dialogResult: any) => {
       if (dialogResult) {
-
+        this.codeManagerService.deleteGroupCode(this.groupCodeForm.cmnGrpCd);
       }
     });
     console.log('onSubmitHandler : ', this.groupCodeForm);
@@ -348,12 +424,29 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
     this.positionOf = `#compareButton`;
   }
 
-  // test
-  private isValidation = true;
-
   onVerificationHandler(event: Event) {
-    this.isValidation = !this.isValidation;
-    this.jobCd = 'J000' + ( this.isValidation ? '1' : '2');
-    // this.popupVisible = true;
+    this.codeManagerService.validateGroupCode(this.groupCodeForm.cmnGrpCd);
+  }
+
+  private setFormSetting(event: any) {
+    this.deleteCodeList.length = 0;
+    const targetData: GroupCodeModel = event.row.data;
+
+    this.currentGroupCode = {...event.row.data};
+    this.isGroupCodeDisabled = true;
+
+    this.groupCodeForm = {
+      cmnGrpCd: targetData.code,
+      cmnGrpCdNm: targetData.codeName,
+      cdDesc: targetData.codeDescription,
+      jobStCd: targetData.jobCode,
+      useYn: targetData.useYn,
+      type: 'update',
+      codeList: []
+    };
+
+    this.codeManagerService.retrieveCodeListByGroupCode(targetData.code);
+
+    console.log('targetData : ', targetData);
   }
 }
