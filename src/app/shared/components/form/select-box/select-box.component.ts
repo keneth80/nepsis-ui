@@ -17,6 +17,9 @@ import { GlobalVariableService } from '../../../services/app/global-variable.ser
 })
 export class SelectBoxComponent extends BaseComponent implements OnInit {
   @Input()
+  readOnly = false;
+
+  @Input()
   items: ListCode[] = [];
 
   @Input()

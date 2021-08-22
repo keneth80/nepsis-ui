@@ -56,8 +56,18 @@
               <dxi-column dataField="codeName" caption="Group Code Name" [width]="190"></dxi-column>
               <!-- <dxi-column dataField="codeStep" caption="Code Step" [width]="100"></dxi-column> -->
               <dxi-column dataField="codeDescription" caption="Description"></dxi-column>
-              <dxi-column dataField="jobCode" caption="Job Code" [width]="200"></dxi-column>
+              <dxi-column dataField="jobCode" caption="Job Code" [width]="200" cellTemplate="jobCodeTemplete"></dxi-column>
               <dxi-column dataField="useYn" caption="Use Y/N" [width]="100"></dxi-column>
+
+              <div *dxTemplate="let job of 'jobCodeTemplete'">
+                <form-select-box
+                  [readOnly]="true"
+                  [items]="jobCodeList"
+                  [isGlobalValue]="true"
+                  [commonCodeType]="'JOB_ST_CD'"
+                  [codeValue]="job.text">
+                </form-select-box>
+              </div>
             </dx-data-grid>
           </div>
         </div>

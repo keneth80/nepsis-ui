@@ -1,6 +1,7 @@
 <dx-select-box
   [items]="items"
   [(value)]="codeValue"
+  [readOnly]="readOnly"
   valueExpr="id"
   displayExpr="label"
   (onSelectionChanged)="onSelectionChanged($event)">
