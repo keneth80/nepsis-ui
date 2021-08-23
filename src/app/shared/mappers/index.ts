@@ -17,7 +17,7 @@ export const codeModelMapper = (code: Code): CodeModel => {
   return {
     cmnCd: code.cmnCd,
     cmnCdNm: code.cmnCdNm,
-    cmnGrpCd: code.cmnCdNm,
+    cmnGrpCd: code.cmnGrpCd,
     useYn: code.useYn,
     srtOdr: code.srtOdr,
     isServer: true

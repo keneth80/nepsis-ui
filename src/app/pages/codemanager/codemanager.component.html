@@ -36,13 +36,14 @@
       <div class="flex-grid">
         <div class="col-12">
           <div class="dx-card responsive-paddings data-grid-height">
-            <dx-data-grid class="dx-card wide-card"
+            <dx-data-grid class="dx-card wide-card" style="max-height:405px"
               [dataSource]="groupCodeList"
               [showBorders]="false"
               [focusedRowEnabled]="true"
               [focusedRowIndex]="0"
               [columnAutoWidth]="true"
               [columnHidingEnabled]="true"
+              (onInitialized)="saveGroupCodeGridInstance($event)"
               [(focusedRowKey)]="focusedGroupCodeRowKey"
               (onFocusedRowChanging)="onFocusedRowChangingHandler($event)"
               (onFocusedRowChanged)="onFocusedRowChangedHandler($event)"
@@ -111,7 +112,9 @@
                 <!--dx-field-->
                 <div class="dx-field">
                   <div class="dx-field-label">Group Code Num<span class="dx-field-item-required-mark">&nbsp;*</span></div>
-                  <dx-text-box class="dx-field-value" [(value)]="groupCodeForm.cmnGrpCdNm">
+                  <dx-text-box class="dx-field-value" 
+                    [(value)]="groupCodeForm.cmnGrpCdNm"
+                    (onValueChanged)="onChangeGroupName($event)">
                   </dx-text-box>
                 </div>
                 <!--dx-field-->
@@ -120,7 +123,8 @@
                   <div class="dx-field-label">Description</div>
                   <div class="dx-field-value">
                     <dx-text-area
-                      [height]="70" [(value)]="groupCodeForm.cdDesc">
+                      [height]="70" [(value)]="groupCodeForm.cdDesc"
+                      (onValueChanged)="onChangeGroupDesc($event)">
                     </dx-text-area>
                   </div>
                 </div>
@@ -152,6 +156,7 @@
                     <dx-radio-group
                       [items]="ynList"
                       [(value)]="groupCodeForm.useYn"
+                      (onValueChanged)="onChangeGroupUseYn($event)"
                       layout="horizontal">
                     </dx-radio-group>
                   </div>

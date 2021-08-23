@@ -64,10 +64,11 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
   // 그룹 코드 그리드에서 포커 변경 시 변경되는 key
   focusedGroupCodeRowKey: any;
   // 그룹 코드 리스트 데이터
-  groupCodeList: GroupCodeModel[] = [];
+  groupCodeList: ArrayStore;
 
   // 선택 된 그룹코드 데이터
   currentGroupCode: GroupCodeModel;
+  originCurrentGroupCode: GroupCodeModel;
 
   // 그룹코드 에디팅 form
   groupCodeForm: GroupCodeParam;
@@ -112,6 +113,8 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
 
   private codeListGridInstance: DataGrid;
 
+  private groupCodeListGridInstance: DataGrid;
+
   private originCodeList: CodeModel[] = [];
 
   private deleteCodeList: CodeModel[] = [];
@@ -139,7 +142,12 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
       onEnterKey: (e: any) => {
         this.onSearchSubmitHandler(e);
       }
-    }
+    };
+
+    this.groupCodeList = new ArrayStore({
+      key: 'code',
+      data: []
+    });
 
     this.groupCodeForm = {
       cmnGrpCd: '',
@@ -194,7 +202,10 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
     });
 
     this.subscription = this.codeManagerService.$groupCodeList.subscribe((groupCodeList: GroupCodeModel[]) => {
-      this.groupCodeList = groupCodeList;
+      this.groupCodeList = new ArrayStore({
+        key: 'code',
+        data: groupCodeList
+      });
       if (groupCodeList.length) {
         this.codeManagerService.retrieveCodeListByGroupCode(groupCodeList[0].code);
       }
@@ -238,6 +249,10 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
 
   ngAfterViewInit() {
     // this.myform.instance.validate()
+  }
+
+  saveGroupCodeGridInstance(e: any) {
+    this.groupCodeListGridInstance = e.component;
   }
 
   selectionChanged(data: any) {
@@ -320,7 +335,6 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
       if (!this.isBack && this.currentGroupCode) {
         // TODO: 하위 코드 리스트를 체크 추가
         if (this.codeManagerService.isChangeValue(this.currentGroupCode, this.groupCodeForm)) {
-          console.log('change : ', this.currentGroupCode, this.groupCodeForm);
           const result: any = confirm('수정중인 데이터가 있습니다. 작업을 취소하시겠습니까?', 'Confirm');
           result.done((dialogResult: any) => {
             if (!dialogResult) {
@@ -328,19 +342,19 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
               this.focusedGroupCodeRowKey = this.groupCodeForm.cmnGrpCd;
             } else {
               this.isBack = false;
+              this.groupCodeList.update(this.groupCodeForm.cmnGrpCd, {
+                ...this.currentGroupCode
+              });
               this.setFormSetting(event);
-              console.log('onFocusedRowChangedHandler3 : ', event, this.focusedGroupCodeRowKey);
             }
           });
         } else {
           this.isBack = false;
           this.setFormSetting(event);
-          console.log('onFocusedRowChangedHandler2 : ', event, this.focusedGroupCodeRowKey);
         }
       } else {
         if (!this.isBack) {
           this.setFormSetting(event);
-          console.log('onFocusedRowChangedHandler1 : ', event, this.focusedGroupCodeRowKey);
         }
         this.isBack = false;
         
@@ -352,9 +366,30 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
     console.log('onGroupCodeChange : ', event, this.groupCodeForm.cmnGrpCd);
   }
 
+  onChangeGroupName(event: any) {
+    if (this.isGroupCodeDisabled) {
+      this.groupCodeList.update(this.groupCodeForm.cmnGrpCd, { codeName: this.groupCodeForm.cmnGrpCdNm });
+    }
+  }
+
+  onChangeGroupDesc(event: any) {
+    if (this.isGroupCodeDisabled) {
+      this.groupCodeList.update(this.groupCodeForm.cmnGrpCd, { codeDescription: this.groupCodeForm.cdDesc });
+    }
+  }
+
+  onChangeGroupUseYn(event: any) {
+    if (this.isGroupCodeDisabled) {
+      this.groupCodeList.update(this.groupCodeForm.cmnGrpCd, { useYn: this.groupCodeForm.useYn });
+    }
+  }
+
   onChangeJobCode(event: ListCode) {
     this.jobCd = event.id;
     this.groupCodeForm.jobStCd = this.jobCd;
+    if (this.isGroupCodeDisabled) {
+      this.groupCodeList.update(this.groupCodeForm.cmnGrpCd, { jobCode: this.jobCd });
+    }
   }
 
   onNewRegisterHandler(event: Event) {
