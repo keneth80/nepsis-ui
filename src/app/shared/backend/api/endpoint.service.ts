@@ -16,7 +16,7 @@ const queryString = (params: any) => Object.keys(params).map(key => key + '=' + 
   providedIn: 'root'
 })
 export class EndpointService {
-  private PRE_FIX = 'api/cm7710';
+  private PRE_FIX = 'api';
 
   constructor(
     private http: HttpClient,
@@ -42,7 +42,7 @@ export class EndpointService {
 
   retrieveGroupCodeList(searchKey: string) {
     return this.http.get<any>(
-      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/groupCodeList?cmnGrpCd=${searchKey}`
+      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/cm7710/groupCodeList?cmnGrpCd=${searchKey}`
     )
     .pipe(
       map((response: GroupCode[]) => {
@@ -53,7 +53,7 @@ export class EndpointService {
 
   validateGroupCode(groupKey: string) {
     return this.http.get<any>(
-      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/groupCode/valid/${groupKey}`
+      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/cm7710/groupCode/valid/${groupKey}`
     )
     .pipe(
       map((response: any) => {
@@ -65,7 +65,7 @@ export class EndpointService {
 
   insertGroupCode(param: GroupCodeParam) {
     return this.http.put<any>(
-      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/groupCode`,
+      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/cm7710/groupCode`,
       param
     )
     .pipe(
@@ -78,7 +78,7 @@ export class EndpointService {
 
   updateGroupCode(param: GroupCodeParam) {
     return this.http.put<any>(
-      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/groupCode`,
+      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/cm7710/groupCode`,
       param
     )
     .pipe(
@@ -91,7 +91,7 @@ export class EndpointService {
 
   deleteGroupCode(groupKey: string) {
     return this.http.put<any>(
-      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/groupCode`,
+      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/cm7710/groupCode`,
       {
         cmnGrpCd: groupKey,
         type: 'delete'
@@ -107,7 +107,7 @@ export class EndpointService {
 
   retrieveCodeListByGroup(groupKey: string) {
     return this.http.get<any>(
-      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/codeList?cmnGrpCd=${groupKey}`
+      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/cm7710/codeList?cmnGrpCd=${groupKey}`
     )
     .pipe(
       map((response: Code[]) => {
@@ -118,12 +118,23 @@ export class EndpointService {
 
   retrieveCommonCodeList(type: string = '') {
     return this.http.get<any>(
-      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/codeList/${type}`
+      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/cm7710/codeList/${type}`
     )
     .pipe(
       map((response: CommonCode[]) => {
         this.globalVarialbe.commonCode[type] = response.map((code: CommonCode) => listCodeMapper(code));
         return this.globalVarialbe.commonCode[type];
+      })
+    );
+  }
+
+  retrieveMenuList() {
+    return this.http.get<any>(
+      `${this.globalVarialbe.remoteUrl}/${this.PRE_FIX}/cm7810/leftMenuList`
+    )
+    .pipe(
+      map((response: any[]) => {
+        return response;
       })
     );
   }

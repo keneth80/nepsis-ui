@@ -1,16 +1,18 @@
-import { Component, NgModule, Output, Input, EventEmitter, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, NgModule, Output, Input, EventEmitter, ViewChild, ElementRef, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ItemClickEvent } from 'devextreme/ui/tree_view';
 import { DxTreeViewModule, DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
 import { navigation } from '../../../app-navigation';
 
 import * as events from 'devextreme/events';
+import { SideNavigationMenuService } from './side-navigation-menu.service';
+import { GlobalVariableService } from '../../services/app/global-variable.service';
 
 @Component({
   selector: 'app-side-navigation-menu',
   templateUrl: './side-navigation-menu.component.html',
-  styleUrls: ['./side-navigation-menu.component.scss']
+  styleUrls: ['./side-navigation-menu.component.scss'],
 })
-export class SideNavigationMenuComponent implements AfterViewInit, OnDestroy {
+export class SideNavigationMenuComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(DxTreeViewComponent, { static: true })
   menu!: DxTreeViewComponent;
 
@@ -31,7 +33,7 @@ export class SideNavigationMenuComponent implements AfterViewInit, OnDestroy {
     this.menu.instance.selectItem(value);
   }
 
-  private _items!: Record <string, unknown>[];
+  private _items!: Record <string, any>[];
   get items() {
     if (!this._items) {
       this._items = navigation.map((item) => {
@@ -64,10 +66,23 @@ export class SideNavigationMenuComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  constructor(private elementRef: ElementRef) { }
+  constructor(
+    private elementRef: ElementRef,
+    private globalVariable: GlobalVariableService,
+    private menuService: SideNavigationMenuService
+  ) { }
 
   onItemClick(event: ItemClickEvent) {
     this.selectedItemChanged.emit(event);
+  }
+
+  ngOnInit() {
+    console.log('menu create : ', this.globalVariable.menuList);
+    this.menuService.$menuList.subscribe((menuList: any[]) => {
+      console.log('menuList : ', menuList);
+    });
+
+    // this.menuService.retrieveMenuList();
   }
 
   ngAfterViewInit() {

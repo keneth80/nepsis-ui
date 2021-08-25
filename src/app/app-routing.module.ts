@@ -7,6 +7,7 @@ import { AuthGuardService } from './shared/services';
 import { DxDataGridModule, DxFormModule } from 'devextreme-angular';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/compiler';
 import { AuthGuard } from './shared/gaurd/auth.gaurd';
+import { MenuResolver } from './shared/resolver/menus.resolver';
 
 const routes: Routes = [
   // {
@@ -52,7 +53,10 @@ const routes: Routes = [
   {
     path: 'codemanager',
     loadChildren: () => import('./pages/codemanager/codemanager.module').then(m => m.CodeManagerModule),
-    canActivate: [ AuthGuard ]
+    canActivate: [ AuthGuard ],
+    resolve: {
+      menus: MenuResolver
+    }
   },
   {
     path: 'form',
