@@ -16,6 +16,7 @@ import { GlobalVariableService } from '../../shared/services/app/global-variable
 import { JOB_ST_CD } from '../../shared/const';
 import { GroupCodeParam, CodeParam } from '../../shared/backend/params/group-code-param';
 import { delayExcute } from '../../shared/utils';
+import { VALIDATION_COMPLETE, VALIDATION_FAIL, INSERT_COMPLETE, MODIFY_COMPLETE, DELETE_COMPLETE, DELETE_CONFIRM, CONFIRM, MODIFY_JOB, INSERT_CONFIRM, MODIFY_CONFIRM, VALIDATION_EXECUTE, WARN } from '../../shared/message';
 
 type GroupSearchForm = {
   cmnGrpCd: string;
@@ -194,7 +195,15 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
   }
 
   ngOnInit() {
+    if (this.globalVariableService.getCommonCode(JOB_ST_CD)) {
+      this.jobCodeList = this.globalVariableService.getCommonCode(JOB_ST_CD);
+      this.codeManagerService.retrieveGroupCodeList(this.groupSearchForm.cmnGrpCd.trim());
+    } else {
+      this.codeManagerService.retrieveJobCodeList(JOB_ST_CD);
+    }
+
     this.subscription = this.codeManagerService.$jobCodeList.subscribe((jobCodeList: ListCode[]) => {
+      this.globalVariableService.setCommonCode(JOB_ST_CD, jobCodeList);
       this.globalVariableService.commonCode[JOB_ST_CD] = jobCodeList;
       this.jobCodeList = this.globalVariableService.commonCode[JOB_ST_CD];
 
@@ -221,12 +230,12 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
 
     this.subscription = this.codeManagerService.$validateGroupCode.subscribe((validate: boolean) => {
       this.isValid = validate;
-      alert(this.isValid ? '검증이 완료되었습니다.' : '다른 코드를 입력해주세요.', '확인');
+      alert(this.isValid ? VALIDATION_COMPLETE : VALIDATION_FAIL, '확인');
     });
 
     this.subscription = this.codeManagerService.$success.subscribe((type: string) => {
-      const message = type === 'insert' ? '등록되었습니다' :
-        type === 'update' ? '수정되었습니다' : '삭제되었습니다';
+      const message = type === 'insert' ? INSERT_COMPLETE :
+        type === 'update' ? MODIFY_COMPLETE : DELETE_COMPLETE;
 
       notify({
         message: message,
@@ -242,9 +251,7 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
         this.groupSearchForm.cmnGrpCd = '';
       }
       this.codeManagerService.retrieveGroupCodeList(this.groupSearchForm.cmnGrpCd.trim());
-    })
-
-    this.codeManagerService.retrieveJobCodeList(JOB_ST_CD);
+    });
   }
 
   ngAfterViewInit() {
@@ -275,7 +282,7 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
   }
 
   deleteRecords() {
-    const result: any = confirm('삭제하시겠습니까?', '확인');
+    const result: any = confirm(DELETE_CONFIRM, CONFIRM);
     result.done((dialogResult: any) => {
       if (dialogResult) {
         this.selectedItemKeys.forEach((key) => {
@@ -335,7 +342,7 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
       if (!this.isBack && this.currentGroupCode) {
         // TODO: 하위 코드 리스트를 체크 추가
         if (this.codeManagerService.isChangeValue(this.currentGroupCode, this.groupCodeForm)) {
-          const result: any = confirm('수정중인 데이터가 있습니다. 작업을 취소하시겠습니까?', 'Confirm');
+          const result: any = confirm(MODIFY_JOB, CONFIRM);
           result.done((dialogResult: any) => {
             if (!dialogResult) {
               this.isBack = true;
@@ -449,11 +456,11 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
 
     const formCheckMessage = this.codeManagerService.validationGroupParam(param)
     if (formCheckMessage !== '') {
-      alert(formCheckMessage, '경고');
+      alert(formCheckMessage, WARN);
       return;
     }
 
-    const result: any = confirm(!this.isGroupCodeDisabled ? '등록하시겠습니까?' : '수정하시겠습니까?', '확인');
+    const result: any = confirm(!this.isGroupCodeDisabled ? INSERT_CONFIRM : MODIFY_CONFIRM, CONFIRM);
     result.done((dialogResult: any) => {
       if (dialogResult) {
         // update
@@ -462,7 +469,7 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
         } else {
           // insert
           if (!this.isValid) {
-            alert('검증을 실행해주세요.', '경고');
+            alert(VALIDATION_EXECUTE, WARN);
             return;
           }
           this.codeManagerService.insertGroupCode(param);
@@ -475,7 +482,7 @@ export class CodeManagerComponent extends BaseComponent implements OnInit, After
 
   onDeleteByGroupCodeHandler(event: Event) {
     // const result: any = confirm('Would you like to Delete?', 'Confirm');
-    const result: any = confirm('삭제하시겠습니까?', '확인');
+    const result: any = confirm(DELETE_CONFIRM, CONFIRM);
     result.done((dialogResult: any) => {
       if (dialogResult) {
         this.codeManagerService.deleteGroupCode(this.groupCodeForm.cmnGrpCd);

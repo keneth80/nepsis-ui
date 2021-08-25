@@ -12,6 +12,8 @@ export class GlobalVariableService {
 
   commonCode: any = {};
 
+  menuList: any[] = [];
+
   constructor(
       private http: HttpClient
   ) { }
@@ -26,5 +28,13 @@ export class GlobalVariableService {
               this.remoteUrl = res.remote;
               return res;
           });
+  }
+
+  setCommonCode(type: string, value: any) {
+    localStorage.setItem(type, JSON.stringify(value));
+  }
+
+  getCommonCode(type: string): any {
+    return localStorage.getItem(type) ? JSON.parse(localStorage.getItem(type) || '') : null;
   }
 }

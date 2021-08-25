@@ -4,6 +4,7 @@ import { Subject, Observable } from 'rxjs';
 import { GroupCodeModel, CodeModel } from '../../shared/models/group-code-model';
 import { ListCode } from '../../shared/models/common-code';
 import { GroupCodeParam } from '../../shared/backend/params/group-code-param';
+import { GROUP_CODE_CHECK, JOB_CODE_CHECK, USE_YN_CHECK, CODE_LIST_CHECK, CODE_LIST_USE_YN_CHECK } from '../../shared/message';
 
 @Injectable()
 export class CodeManagerService {
@@ -91,19 +92,19 @@ export class CodeManagerService {
   validationGroupParam(param: GroupCodeParam) {
     let errorMessage = '';
     if (!param.cmnGrpCd || param.cmnGrpCd.trim() === '') {
-      errorMessage = 'Group Code를 입력해주세요.';
+      errorMessage = GROUP_CODE_CHECK;
     } else if (!param.jobStCd || param.jobStCd.trim() === '') {
-      errorMessage = 'Job Code를 입력해주세요.';
+      errorMessage = JOB_CODE_CHECK;
     } else if (!param.useYn || param.useYn.trim() === '') {
-      errorMessage = 'Use Y/N을 선택해주세요.';
+      errorMessage = USE_YN_CHECK;
     } else if (!param.codeList.length) {
-      errorMessage = '하위 code를 등록해주세요.';
+      errorMessage = CODE_LIST_CHECK;
     } else {
       for (const codeParam of param.codeList) {
         if (!codeParam.cmnCd) {
-          errorMessage = '하위 code를 입력해주세요.';
+          errorMessage = CODE_LIST_CHECK;
         } else if (!codeParam.useYn) {
-          errorMessage = '하위 code 선택여부를 선택해주세요.';
+          errorMessage = CODE_LIST_USE_YN_CHECK;
         }
 
         if (errorMessage !== '') {
