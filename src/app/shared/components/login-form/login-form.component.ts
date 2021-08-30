@@ -18,7 +18,7 @@ export class LoginFormComponent extends BaseComponent implements OnInit {
   loading = false;
   formData: any = {};
 
-  private returnUrl = '/codemanager';
+  private mainPath = '/cm7710';
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -30,21 +30,19 @@ export class LoginFormComponent extends BaseComponent implements OnInit {
 
   ngOnInit() {
     if (this.authenticationService.isAuthenticated()) {
-      this.router.navigate(['/codemanager']);
+      this.router.navigate([this.mainPath]);
       return;
     }
 
-    // this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/codemanager';
-
-    this.subscription = this.authenticationService.loginUser$
+    this.subscription = this.authenticationService.$loginUser
       .subscribe((user: UserModel) => {
         this.loading = false;
         if (user) {
-          this.router.navigate(['/codemanager']);
+          this.router.navigate([this.mainPath]);
         }
       });
 
-    this.subscription = this.authenticationService.loginError$
+    this.subscription = this.authenticationService.$loginError
       .subscribe((error: any) => {
         this.loading = false;
         this.formData.password = '';

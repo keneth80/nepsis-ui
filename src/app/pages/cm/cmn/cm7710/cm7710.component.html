@@ -1,0 +1,311 @@
+<!--flex-wrap-->
+<div data-content="wrapper" class="flex-wrap">
+
+  <!--flex-grid-->
+  <div data-content="search" class="flex-grid">
+    <!--top search form-->
+    <div class="col-12">
+      <div class="dx-card responsive-paddings">
+        <dx-form class="form-search"
+                 [formData]="groupSearchForm"
+                 labelLocation="left">
+          <dxi-item itemType="group">
+            <dxi-item dataField="cmnGrpCd" editorType="dxTextBox"
+                      [editorOptions]="groupCodeSearchInputOptions">
+            </dxi-item>
+          </dxi-item>
+          <dxi-item class="form-search-btn">
+            <button class="btn back-cyan small" (click)="onSearchSubmitHandler($event)">Search
+            </button>
+            <button class="btn small none i-reset" (click)="onInputResetHandler($event)"></button>
+          </dxi-item>
+        </dx-form>
+      </div>
+    </div>
+    <!--//top search form-->
+  </div>
+  <!--//flex-grid-->
+  <div class="center-container">
+    <!--flex-grid-->
+    <div data-content="upper" class="flex-grid">
+      <div class="col-12">
+        <div class="dx-card responsive-paddings data-grid-height">
+          <dx-data-grid class="dx-card wide-card"
+                        [height]="groupListHeight"
+                        [dataSource]="groupCodeList"
+                        [showBorders]="false"
+                        [focusedRowEnabled]="true"
+                        [focusedRowIndex]="0"
+                        [columnAutoWidth]="true"
+                        [allowColumnResizing]="true"
+                        [columnHidingEnabled]="true"
+                        (onInitialized)="onInitializedGroupCodeGrid($event)"
+                        [(focusedRowKey)]="focusedGroupCodeRowKey"
+                        (onFocusedRowChanging)="onFocusedRowChangingHandler($event)"
+                        (onFocusedRowChanged)="onFocusedRowChangedHandler($event)"
+                        keyExpr="code">
+
+            <!--              <dxo-paging [pageSize]="10"></dxo-paging>-->
+            <!--              <dxo-pager [showPageSizeSelector]="true" [showInfo]="true"></dxo-pager>-->
+            <!--              <dxo-filter-row [visible]="true"></dxo-filter-row>-->
+
+            <!-- paging 사용여부 -->
+            <dxo-paging [enabled]="false"></dxo-paging>
+            <!-- data loading panel 사용여부 -->
+            <dxo-load-panel [enabled]="true"></dxo-load-panel>
+            <!-- row data scrolling 타입 -->
+            <dxo-scrolling mode="virtual"></dxo-scrolling>
+
+            <dxi-column dataField="code" caption="Group Code" [width]="120"></dxi-column>
+            <dxi-column dataField="codeName" caption="Group Code Name" [width]="190"></dxi-column>
+            <!-- <dxi-column dataField="codeStep" caption="Code Step" [width]="100"></dxi-column> -->
+            <dxi-column dataField="codeDescription" caption="Description"></dxi-column>
+            <dxi-column dataField="jobCode" caption="Job Code" [width]="200" cellTemplate="jobCodeTemplete"></dxi-column>
+            <dxi-column dataField="useYn" caption="Use Y/N" [width]="100"></dxi-column>
+
+            <div *dxTemplate="let job of 'jobCodeTemplete'">
+              <common-code-select-box
+                  [readOnly]="true"
+                  [items]="jobCodeList"
+                  [isGlobalValue]="true"
+                  [commonCodeType]="'JOB_ST_CD'"
+                  [codeValue]="job.text">
+              </common-code-select-box>
+            </div>
+          </dx-data-grid>
+        </div>
+      </div>
+    </div>
+    <!--//flex-grid-->
+
+    <!--flex-grid 3/9-->
+    <div data-content="lower" class="flex-grid">
+      <!--col-3-->
+      <div class="col-4">
+        <div class="dx-card responsive-paddings">
+          <!--form-->
+          <div class="form">
+            <!--dx-fieldset-->
+            <div class="dx-fieldset">
+              <div class="dx-fieldset-header">Group Code</div>
+              <!--from second grid-->
+              <div class="dx-field">
+                <div class="dx-field-label">Group Code<span class="dx-field-item-required-mark">&nbsp;*</span>
+                </div>
+                <div class="dx-field-value">
+                  <div class="form-grid middle second"><!--form-grid middle second-->
+                    <div>
+                      <dx-text-box
+                          [disabled]="isGroupCodeDisabled"
+                          [(value)]="groupCodeForm.cmnGrpCd"
+                          (change)="onChangeGroupCode($event)">
+                      </dx-text-box>
+                    </div>
+                    <div>
+                      <button class="btn back-cyan medium"
+                              [id]="'compareButton'"
+                              [disabled]="isGroupCodeDisabled"
+                              (click)="onVerificationHandler($event)">
+                        Validate
+                      </button>
+                    </div>
+                  </div><!--form-grid middle second-->
+                </div>
+              </div>
+              <!--from second grid-->
+              <!--dx-field-->
+              <div class="dx-field">
+                <div class="dx-field-label">Group Code Num<span class="dx-field-item-required-mark">&nbsp;*</span>
+                </div>
+                <dx-text-box class="dx-field-value"
+                             [(value)]="groupCodeForm.cmnGrpCdNm"
+                             (onValueChanged)="onChangeGroupName($event)">
+                </dx-text-box>
+              </div>
+              <!--dx-field-->
+              <!-- select box -->
+              <div class="dx-field">
+                <div class="dx-field-label">Description</div>
+                <div class="dx-field-value">
+                  <dx-text-area
+                      [height]="70" [(value)]="groupCodeForm.cdDesc"
+                      (onValueChanged)="onChangeGroupDesc($event)">
+                  </dx-text-area>
+                </div>
+              </div>
+              <!--//select box -->
+              <!-- select box -->
+              <div class="dx-field">
+                <div class="dx-field-label">Job Code<span class="dx-field-item-required-mark">&nbsp;*</span>
+                </div>
+                <div class="dx-field-value">
+                  <!-- <dx-select-box
+                    [items]="jobCodeList"
+                    [(value)]="groupCodeForm.jobStCd"
+                    valueExpr="id"
+                    displayExpr="label">
+                  </dx-select-box> -->
+                  <common-code-select-box
+                      [items]="jobCodeList"
+                      [isGlobalValue]="true"
+                      [commonCodeType]="'JOB_ST_CD'"
+                      [codeValue]="groupCodeForm.jobStCd"
+                      (onChangeValue)="onChangeJobCode($event)">
+                  </common-code-select-box>
+                </div>
+              </div>
+              <!--//select box -->
+              <!-- radio -->
+              <div class="dx-field">
+                <div class="dx-field-label">Use Y/N<span
+                    class="dx-field-item-required-mark">&nbsp;*</span></div>
+                <div class="dx-field-value">
+                  <dx-radio-group
+                      [items]="ynList"
+                      [(value)]="groupCodeForm.useYn"
+                      (onValueChanged)="onChangeGroupUseYn($event)"
+                      layout="horizontal">
+                  </dx-radio-group>
+                </div>
+              </div>
+              <!--//radio -->
+              <!--dx-field-->
+              <div class="dx-field t-right">
+                <button class="btn back-cyan small" (click)="onNewRegisterHandler($event)">New
+                </button>
+              </div>
+              <!--//dx-field-->
+            </div>
+            <!--dx-fieldset-->
+          </div>
+          <!--//form-->
+        </div>
+      </div>
+      <!--//col-3-->
+      <!--col-9-->
+      <div class="col-8">
+        <div class="dx-card responsive-paddings code-data-grid-height">
+          <dx-data-grid
+              [height]="340"
+              [dataSource]="codeList"
+              [showBorders]="true"
+              [allowColumnResizing]="true"
+              (onInitialized)="onInitializedCodeGrid($event)"
+              (onRowRemoved)="onRowRemoved($event)"
+              (onSelectionChanged)="onSelectionChanged($event)"
+              (onToolbarPreparing)="onToolbarPreparing($event)">
+
+            <!-- paging 사용여부 -->
+            <dxo-paging [enabled]="false"></dxo-paging>
+            <!-- data loading panel 사용여부 -->
+            <dxo-load-panel [enabled]="true"></dxo-load-panel>
+            <!-- row data scrolling 타입 -->
+            <dxo-scrolling mode="virtual"></dxo-scrolling>
+            <!-- multi select -->
+            <dxo-selection mode="multiple"></dxo-selection>
+
+            <dxo-editing
+                mode="cell"
+                [allowUpdating]="true"
+                [allowAdding]="true"
+                [allowDeleting]="true">
+            </dxo-editing>
+
+            <dxi-column dataField="cmnCd" caption="Code" [width]="80">
+              <dxi-validation-rule
+                  type="stringLength"
+                  [min]="1"
+                  message="code를 입력해주세요.">
+              </dxi-validation-rule>
+            </dxi-column>
+            <dxi-column dataField="cmnCdNm" caption="Code Name" [width]="150"></dxi-column>
+            <dxi-column dataField="rmk" caption="Code Desc"></dxi-column>
+            <dxi-column dataField="useYn" caption="Use Y/N"
+                        [width]="70"
+                        [editorOptions]="editorOptions">
+              <dxo-lookup
+                  [dataSource]="statuses"
+                  valueExpr="id"
+                  displayExpr="label">
+              </dxo-lookup>
+            </dxi-column>
+            <dxi-column dataField="srtOdr" caption="Sort Order" [width]="70"></dxi-column>
+            <dx-button
+                *dxTemplate="let data of 'deleteButton'"
+                (onClick)="deleteRecords()"
+                [disabled]="!selectedItemKeys.length"
+                icon="trash"
+                text="Delete Selected Records">
+            </dx-button>
+
+          </dx-data-grid>
+        </div>
+      </div>
+      <!--//col-9-->
+    </div>
+    <!--//flex-grid 3/9-->
+  </div>
+  <!--button-area-->
+  <div data-content="bottom" class="bottom-button-container">
+    <div class="t-right">
+      <button class="btn back-carmine small" (click)="onSubmitByGroupCodeHandler($event)">Save
+      </button>
+      <button class="btn back-carmine small outline" (click)="onDeleteByGroupCodeHandler($event)">
+        Delete
+      </button>
+    </div>
+  </div>
+  <!--button-area-->
+</div>
+<dx-popup
+    [width]="300"
+    [height]="280"
+    [showTitle]="true"
+    title="Information"
+    [dragEnabled]="false"
+    [closeOnOutsideClick]="true"
+    [showCloseButton]="false"
+    container=".dx-viewport"
+    [(visible)]="popupVisible">
+  <dxi-toolbar-item
+      widget="dxButton"
+      toolbar="bottom"
+      location="before"
+      [options]="emailButtonOptions">
+  </dxi-toolbar-item>
+  <dxi-toolbar-item
+      widget="dxButton"
+      toolbar="bottom"
+      location="after"
+      [options]="closeButtonOptions">
+  </dxi-toolbar-item>
+  <dxo-position
+      at="bottom"
+      my="center"
+      [of]="positionOf">
+  </dxo-position>
+  <div *dxTemplate="let data of 'content'">
+    <p>
+      Full Name:
+      <span>Kenneth</span>
+    </p>
+    <p>
+      Birth Date:
+      <span></span>
+    </p>
+    <p>
+      Address:
+      <span></span>
+    </p>
+    <p>
+      Hire Date:
+      <span></span>
+    </p>
+    <p>
+      Position:
+      <span></span>
+    </p>
+  </div>
+</dx-popup>
+<!--//flex-wrap-->
+

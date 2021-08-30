@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { AppInjector } from '../services/app/app-injector.service';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Subscription} from 'rxjs';
+import {AppInjector} from '../services/app/app-injector.service';
 
 @Component({
     selector: 'app-base',
@@ -8,31 +8,25 @@ import { AppInjector } from '../services/app/app-injector.service';
 })
 export class BaseComponent implements OnInit, OnDestroy {
 
-  private subscriptions: Subscription;
+    private subscriptions: Subscription;
 
-  constructor() {
-      // service lazy loading
-      const injector = AppInjector.getInjector();
-      if (injector) {
+    constructor() {
+        // service lazy loading
+        const injector = AppInjector.getInjector();
+        if (injector) {
 
-      }
-      this.subscriptions = new Subscription();
-  }
+        }
+        this.subscriptions = new Subscription();
+    }
 
-  set subscription(value: Subscription) {
-      this.subscriptions.add(value);
-  }
+    set subscription(value: Subscription) {
+        this.subscriptions.add(value);
+    }
 
-  ngOnInit() {
-      if (console && console.log) {
-          console.log('BaseComponent.init');
-      }
-  }
+    ngOnInit() {
+    }
 
-  ngOnDestroy() {
-      this.subscriptions.unsubscribe();
-      if (console && console.log) {
-          console.log('BaseComponent.destroy');
-      }
-  }
+    ngOnDestroy() {
+        this.subscriptions.unsubscribe();
+    }
 }

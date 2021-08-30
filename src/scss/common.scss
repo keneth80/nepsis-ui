@@ -1,3 +1,4 @@
+@use "sass:math";
 @charset "UTF-8";
 @import 'variables';
 @import 'mixin';
@@ -142,7 +143,8 @@ $breakpoints:("": "0px", "s":"480px", "m":"768px", "l":"980px");
     .col{
       @media screen and (min-width: $break){
         @for $i from 1 through 11{
-          $width: 100%/12 * $i;
+          //$width: 100%/12 * $i;
+          $width: math.div(100%, 12) * $i;
           &-#{$name+$i}{
             flex-basis: $width;
             margin-bottom: 0;

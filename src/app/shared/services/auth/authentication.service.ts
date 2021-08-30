@@ -1,13 +1,10 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { map, first, shareReplay } from 'rxjs/operators';
-import { Subject, Observable, throwError } from 'rxjs';
-import { JwtHelperService } from '@auth0/angular-jwt';
-import { GlobalVariableService } from '../app/global-variable.service';
-import { CatchAll } from '../../decorator/catch';
-import { EndpointService } from '../../backend/api/endpoint.service';
-import { UserModel } from '../../models/user-model';
-import { Router } from '@angular/router';
+import {Injectable} from '@angular/core';
+import {Observable, Subject} from 'rxjs';
+import {JwtHelperService} from '@auth0/angular-jwt';
+import {CatchAll} from '../../decorator/catch';
+import {CommonsEndpointService} from '../../backend/api/commons-endpoint.service';
+import {UserModel} from '../../models/user-model';
+import {Router} from '@angular/router';
 
 const tokenParse = (token: string): UserModel => {
   const base64Url = token.split('.')[1];
@@ -24,7 +21,6 @@ const tokenParse = (token: string): UserModel => {
 
 @Injectable()
 export class AuthenticationService {
-  private PRE_FIX: string = '';
 
   private TOKEN_NAME = 'jwt_token';
 
@@ -39,9 +35,8 @@ export class AuthenticationService {
   private currentUserModel: UserModel | null = null;
 
   constructor(
-    private endpoint: EndpointService,
-    private router: Router,
-    private globalService: GlobalVariableService
+    private endpoint: CommonsEndpointService,
+    private router: Router
   ) {
       this.currentUserSubject = new Subject();
       this.loginErrorSubject = new Subject();
@@ -51,11 +46,11 @@ export class AuthenticationService {
     return this.currentUserModel;
   }
 
-  get loginUser$(): Observable<UserModel> {
+  get $loginUser(): Observable<UserModel> {
       return this.currentUserSubject.asObservable();
   }
 
-  get loginError$(): Observable<any> {
+  get $loginError(): Observable<any> {
     return this.loginErrorSubject.asObservable();
   }
 

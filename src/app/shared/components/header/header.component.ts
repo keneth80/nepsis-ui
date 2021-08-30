@@ -54,7 +54,7 @@ export class HeaderComponent extends BaseComponent implements OnInit {
 
   ngOnInit() {
     this.user = this.authService.currentUserValue;
-    this.subscription = this.authService.loginUser$.subscribe((user: UserModel) => {
+    this.subscription = this.authService.$loginUser.subscribe((user: UserModel) => {
       if (user) {
         this.user = user;
       } else {

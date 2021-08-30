@@ -11,7 +11,8 @@ import { Router } from '@angular/router';
 })
 export class AppComponent implements OnInit {
   isUser = false;
-  @HostBinding('class') get getClass() {
+  @HostBinding('class')
+  get getClass() {
     return Object.keys(this.screen.sizes).filter(cl => this.screen.sizes[cl]).join(' ');
   }
 
@@ -21,11 +22,11 @@ export class AppComponent implements OnInit {
     private router: Router,
     public appInfo: AppInfoService
   ) {
-    console.log('App : ', this.authentication.currentUserValue);
+    // console.log('App : ', this.authentication.currentUserValue);
   }
 
   ngOnInit() {
-    this.authentication.loginUser$.subscribe((user: UserModel) => {
+    this.authentication.$loginUser.subscribe((user: UserModel) => {
       if (user) {
         this.isUser = true;
       } else {

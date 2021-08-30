@@ -13,7 +13,6 @@ import { AuthGuard } from './shared/gaurd/auth.gaurd';
 import { AuthenticationService } from './shared/services/auth/authentication.service';
 import { APP_BASE_HREF } from '@angular/common';
 import { BackendModule } from './shared/backend/backend.module';
-import { SelectBoxComponent } from './shared/components/form/select-box/select-box.component';
 
 @NgModule({
   declarations: [
